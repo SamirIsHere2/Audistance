@@ -1,0 +1,2493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OtoCorrect — your hearing. your way.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --bg-soft:#FBF8FF;
+    --panel:#F4EEFF;
+    --panel-2:#ECE1FB;
+    --line:#DED0F5;
+    --text:#241B35;
+    --muted:#7C6C97;
+    --accent:#8B5CF6;
+    --accent-deep:#6C3FC5;
+    --accent-soft:#C9B6F2;
+    --red:#D8493D;
+    --amber:#C98A24;
+    --green:#3AA179;
+    --spotify:#1DB954;
+    --glass-panel: rgba(244,238,255,0.55);
+    --glass-panel-2: rgba(236,225,251,0.55);
+    --glass-border: rgba(255,255,255,0.55);
+    --glass-shadow: 0 14px 34px -14px rgba(108,63,197,0.35), 0 2px 10px rgba(108,63,197,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    padding:0 0 60px;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px;}
+  a{color:inherit;}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    max-width:960px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 20px 10px;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{
+    width:38px;height:20px;
+    flex-shrink:0;
+    display:block;
+  }
+  .brand-name{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:18px;
+    letter-spacing:-0.01em;
+  }
+  .tabs{display:flex;gap:4px;flex-wrap:wrap;}
+  .tab-btn{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    background:none;
+    border:1px solid transparent;
+    color:var(--muted);
+    padding:8px 14px;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .tab-btn.active{
+    color:var(--accent-deep);
+    background:var(--glass-panel);
+    border-color:var(--glass-border);
+    backdrop-filter:blur(10px) saturate(160%);
+    -webkit-backdrop-filter:blur(10px) saturate(160%);
+    box-shadow:0 6px 16px -8px rgba(108,63,197,0.35);
+  }
+  .tab-btn:hover:not(.active){ color:var(--text); }
+
+  .auth-area{display:flex;align-items:center;gap:10px;margin-left:auto;}
+  .auth-btn{
+    font-family:'Space Grotesk', sans-serif;font-weight:600;font-size:13.5px;
+    background:var(--accent);color:#fff;border:none;
+    padding:8px 16px;border-radius:999px;cursor:pointer;
+  }
+  .auth-btn:hover{background:var(--accent-deep);}
+  .auth-chip{
+    display:flex;align-items:center;gap:8px;
+    background:var(--glass-panel);border:1px solid var(--glass-border);
+    border-radius:999px;padding:5px 10px 5px 5px;
+    backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+    box-shadow:0 6px 16px -10px rgba(108,63,197,0.35);
+  }
+  .auth-avatar{width:24px;height:24px;border-radius:50%;background:var(--accent-soft);object-fit:cover;}
+  .auth-chip span{font-size:13px;font-weight:500;color:var(--text);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .auth-signout{
+    font-family:'IBM Plex Sans', sans-serif;font-size:11.5px;font-weight:600;
+    background:none;border:none;color:var(--accent-deep);cursor:pointer;text-decoration:underline;padding:0;
+  }
+
+  .view{display:none;margin-top:10px;}
+  .view.active{display:block;}
+
+  /* ---------- HOME / hero ---------- */
+  .hero{
+    position:relative;
+    overflow:hidden;
+    border-radius:28px;
+    margin:14px 0 26px;
+    padding:88px 32px 76px;
+    text-align:center;
+    background:
+      radial-gradient(circle at 50% 8%, #E8D9FF 0%, #F6F1FF 38%, #FFFFFF 72%);
+    isolation:isolate;
+  }
+  .hero::before, .hero::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    filter:blur(60px);
+    opacity:0.55;
+    z-index:-1;
+    animation:drift 14s ease-in-out infinite alternate;
+  }
+  .hero::before{
+    width:280px;height:280px;
+    background:var(--accent-soft);
+    top:-90px;left:8%;
+  }
+  .hero::after{
+    width:340px;height:340px;
+    background:#D6C3FA;
+    bottom:-140px;right:6%;
+    animation-delay:2s;
+  }
+  @keyframes drift{
+    from{ transform:translate(0,0) scale(1); }
+    to{ transform:translate(18px,-14px) scale(1.08); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero::before, .hero::after{ animation:none; }
+  }
+  .hero-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--accent-deep);
+    margin-bottom:18px;
+  }
+  .hero h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:56px;
+    line-height:1.08;
+    letter-spacing:-0.02em;
+    margin:0 0 20px;
+  }
+  .hero h1 .soft{ color:var(--accent-deep); }
+  .hero-tagline{
+    max-width:520px;
+    margin:0 auto 14px;
+    color:var(--accent-deep);
+    font-weight:600;
+    font-size:16px;
+    line-height:1.55;
+  }
+  .hero-sub{
+    max-width:520px;
+    margin:0 auto 34px;
+    color:var(--muted);
+    font-size:16.5px;
+    line-height:1.6;
+  }
+  .hero-waves{
+    position:absolute;inset:0;
+    z-index:0;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .wave-svg{
+    position:absolute;
+    bottom:0;left:0;
+    width:100%;height:70%;
+  }
+  .wave-path{
+    stroke:var(--accent-soft);
+    stroke-width:2.5;
+    stroke-linecap:round;
+    stroke-dasharray:6 10;
+    animation:waveFlow 7s linear infinite;
+  }
+  .wave-1{ opacity:0.45; animation-duration:9s; }
+  .wave-2{ opacity:0.3; stroke:#D6C3FA; animation-duration:12s; animation-direction:reverse; }
+  .wave-3{ opacity:0.35; stroke:#B9A2EE; animation-duration:14s; }
+  .wave-4{ opacity:0.22; stroke:#E3D5FC; animation-duration:10s; animation-direction:reverse; }
+  @keyframes waveFlow{
+    to{ stroke-dashoffset:-320; }
+  }
+  .eq-bars{
+    position:absolute;
+    left:50%;bottom:14%;
+    transform:translateX(-50%);
+    display:flex;
+    align-items:flex-end;
+    gap:5px;
+    height:60px;
+    opacity:0.4;
+  }
+  .eq-bars span{
+    display:block;
+    width:4px;
+    border-radius:3px;
+    background:var(--accent);
+    animation:eqBounce 1.6s ease-in-out infinite;
+  }
+  @keyframes eqBounce{
+    0%, 100%{ transform:scaleY(0.3); }
+    50%{ transform:scaleY(1); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .wave-path{ animation:none; }
+    .eq-bars span{ animation:none; }
+  }
+  .hero-content{
+    position:relative;
+    z-index:2;
+  }
+  .hero-ctas{
+    display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+  }
+  .hero-cta{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+    padding:13px 22px;
+    border-radius:12px;
+    cursor:pointer;
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--text);
+  }
+  .hero-cta.solid{
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    box-shadow:0 10px 24px -10px rgba(139,92,246,0.55);
+  }
+
+  .mission-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:14px;
+    margin-bottom:20px;
+  }
+  @media (max-width:720px){ .mission-grid{grid-template-columns:1fr;} }
+  .mission-card{
+    background:var(--glass-panel);
+    border:1px solid var(--glass-border);
+    border-radius:16px;
+    padding:22px;
+    backdrop-filter:blur(14px) saturate(160%);
+    -webkit-backdrop-filter:blur(14px) saturate(160%);
+    box-shadow:var(--glass-shadow);
+  }
+  .mission-card .mc-icon{
+    width:34px;height:34px;border-radius:10px;
+    background:#fff;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:14px;
+    color:var(--accent-deep);
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;
+  }
+  .mission-card h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:16.5px;margin:0 0 8px;
+  }
+  .mission-card p{
+    color:var(--muted);font-size:13.8px;line-height:1.6;margin:0 0 14px;
+  }
+  .mission-card button{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:600;font-size:13px;
+    background:none;border:none;color:var(--accent-deep);
+    cursor:pointer;padding:0;text-decoration:underline;
+  }
+
+  .home-note{
+    font-size:12.5px;color:var(--muted);line-height:1.6;
+    border-top:1px solid var(--line);padding-top:16px;margin-top:8px;
+  }
+
+  /* ---------- shared page header ---------- */
+  .page-head{margin:22px 0 20px;}
+  .page-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--accent-deep);margin-bottom:8px;
+  }
+  .page-head h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;font-size:30px;margin:0 0 8px;letter-spacing:-0.01em;
+  }
+  .page-head p{color:var(--muted);font-size:14.5px;line-height:1.6;max-width:600px;margin:0;}
+
+  /* ---------- generic panels ---------- */
+  .panel{
+    background:var(--glass-panel);
+    border:1px solid var(--glass-border);
+    border-radius:16px;
+    padding:20px;
+    backdrop-filter:blur(16px) saturate(160%);
+    -webkit-backdrop-filter:blur(16px) saturate(160%);
+    box-shadow:var(--glass-shadow);
+  }
+  .panel-white{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:20px;
+  }
+
+  /* ---------- distance page ---------- */
+  .grid{display:grid;grid-template-columns:1.15fr 1fr;gap:20px;}
+  @media (max-width:760px){ .grid{grid-template-columns:1fr;} }
+  .stack{display:flex;flex-direction:column;gap:20px;}
+
+  .stage{
+    position:relative;aspect-ratio:4/3;
+    background:var(--glass-panel-2);border-radius:12px;overflow:hidden;border:1px solid var(--glass-border);
+    backdrop-filter:blur(14px) saturate(160%);
+    -webkit-backdrop-filter:blur(14px) saturate(160%);
+    box-shadow:var(--glass-shadow);
+  }
+  video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block;}
+  canvas.overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+  .stage-msg{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:24px;font-size:14px;color:var(--muted);
+    background:var(--glass-panel-2);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);z-index:2;
+  }
+  .stage-msg button{
+    font-family:'IBM Plex Sans', sans-serif;font-weight:600;
+    background:var(--accent);color:#fff;border:none;
+    padding:10px 18px;border-radius:8px;cursor:pointer;font-size:14px;margin-top:14px;
+  }
+  .status-line{
+    margin-top:14px;display:flex;align-items:center;gap:10px;
+    font-family:'Space Grotesk', sans-serif;font-weight:600;font-size:17px;
+  }
+  .status-dot{width:11px;height:11px;border-radius:50%;background:var(--red);transition:background 0.25s ease;}
+  .readout{font-family:'IBM Plex Mono', monospace;color:var(--muted);font-size:13px;margin-top:2px;}
+
+  .metrics{display:flex;flex-direction:column;gap:10px;}
+  .metric{
+    background:var(--glass-panel-2);border:1px solid var(--glass-border);border-radius:10px;
+    padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%);
+    box-shadow:0 8px 22px -12px rgba(108,63,197,0.3);
+  }
+  .metric-left{display:flex;align-items:center;gap:10px;}
+  .metric-dot{width:10px;height:10px;border-radius:50%;background:var(--red);flex-shrink:0;transition:background 0.25s ease;}
+  .metric-name{font-size:14px;font-weight:500;}
+  .metric-hint{font-size:12px;color:var(--muted);margin-top:2px;}
+  .metric-value{font-family:'IBM Plex Mono', monospace;font-size:14px;color:var(--text);text-align:right;min-width:70px;}
+
+  .settings{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
+  .settings-title{
+    font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);
+    font-family:'IBM Plex Mono', monospace;margin-bottom:10px;display:flex;align-items:center;gap:8px;
+  }
+  .settings-title .dot-sm{width:6px;height:6px;border-radius:50%;background:var(--spotify);}
+  .range-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .range-row input[type=number], .range-row input[type=text]{
+    width:64px;background:#fff;border:1px solid var(--line);color:var(--text);
+    border-radius:6px;padding:6px 8px;font-family:'IBM Plex Mono', monospace;font-size:13px;
+  }
+  .range-row input[type=text].wide{width:170px;}
+  .range-row span{color:var(--muted);font-size:13px;}
+  .unit-toggle{display:flex;gap:6px;margin-top:10px;}
+  .unit-toggle button{
+    font-family:'IBM Plex Mono', monospace;font-size:12px;background:#fff;
+    border:1px solid var(--line);color:var(--muted);padding:5px 10px;border-radius:6px;cursor:pointer;
+  }
+  .unit-toggle button.active{border-color:var(--accent);color:var(--accent-deep);}
+
+  .adv-toggle{
+    margin-top:10px;font-size:12px;color:var(--muted);background:none;border:none;
+    text-decoration:underline;cursor:pointer;padding:0;font-family:'IBM Plex Sans', sans-serif;
+  }
+  .adv-row{display:none;margin-top:10px;align-items:center;gap:8px;}
+  .adv-row.show{display:flex;flex-wrap:wrap;}
+  .adv-row input[type=range]{width:120px;}
+
+  footer.foot{
+    margin-top:26px;font-size:12px;color:var(--muted);line-height:1.6;
+    border-top:1px solid var(--line);padding-top:16px;
+  }
+
+  /* ---------- app connections page ---------- */
+  .conn-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:16px;margin-bottom:8px;}
+  @media (max-width:760px){ .conn-grid{grid-template-columns:1fr;} }
+  .conn-card{text-align:left;}
+  .conn-icon{
+    width:38px;height:38px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;font-weight:700;margin-bottom:14px;
+  }
+  .conn-card h3{font-family:'Space Grotesk', sans-serif;font-size:16.5px;margin:0 0 8px;}
+  .conn-card p{color:var(--muted);font-size:13.5px;line-height:1.6;margin:0 0 14px;}
+
+  /* ---------- word repetition table ---------- */
+  .word-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13.5px;}
+  .word-table th{
+    text-align:left;font-family:'IBM Plex Mono', monospace;font-size:11px;letter-spacing:0.08em;
+    text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding:8px 10px;
+  }
+  .word-table td{padding:9px 10px;border-bottom:1px solid var(--line);}
+  .word-table td.result-correct{color:var(--green);font-weight:600;}
+  .word-table td.result-wrong{color:var(--red);font-weight:600;}
+
+  .switch{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;}
+  .switch input{opacity:0;width:0;height:0;position:absolute;}
+  .switch-track{
+    position:absolute;inset:0;background:#fff;border:1px solid var(--line);
+    border-radius:22px;transition:background 0.2s ease;cursor:pointer;
+  }
+  .switch-thumb{
+    position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;
+    background:var(--muted);transition:transform 0.2s ease, background 0.2s ease;
+  }
+  .switch input:checked + .switch-track{border-color:var(--accent);}
+  .switch input:checked + .switch-track .switch-thumb{transform:translateX(18px);background:var(--accent);}
+
+  .modal-backdrop{
+    display:none;position:fixed;inset:0;background:rgba(60,40,90,0.28);
+    align-items:center;justify-content:center;z-index:50;padding:20px;
+  }
+  .modal-backdrop.show{display:flex;}
+  .modal-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;max-width:420px;}
+  .modal-title{font-family:'Space Grotesk', sans-serif;font-weight:600;font-size:18px;margin-bottom:10px;}
+  .modal-body{font-size:14px;color:var(--muted);line-height:1.55;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;}
+  .modal-btn{
+    font-family:'IBM Plex Sans', sans-serif;font-weight:600;font-size:14px;
+    padding:9px 16px;border-radius:8px;cursor:pointer;border:1px solid var(--line);
+  }
+  .modal-btn.ghost{background:transparent;color:var(--muted);}
+  .modal-btn.solid{background:var(--accent);color:#fff;border:none;}
+  .modal-btn.spotify-solid{background:var(--spotify);color:#04240F;border:none;}
+
+  .sp-status{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;}
+  .sp-status.err{color:var(--red);}
+  .sp-status.ok{color:var(--green);}
+  .connect-btn{
+    font-family:'IBM Plex Sans', sans-serif;font-weight:600;font-size:13px;
+    background:var(--spotify);color:#04240F;border:none;padding:9px 16px;border-radius:8px;cursor:pointer;
+  }
+  .connect-btn.disconnect{background:transparent;border:1px solid var(--line);color:var(--muted);}
+
+  /* ---------- sound corrector page ---------- */
+  .eq-grid{display:grid;grid-template-columns:1fr;gap:20px;}
+  .eq-bands{
+    display:grid;grid-template-columns:repeat(6,1fr);gap:10px;
+    margin:20px 0 8px;
+  }
+  @media (max-width:640px){ .eq-bands{grid-template-columns:repeat(3,1fr);} }
+  .eq-band{
+    background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:14px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  }
+  .eq-band label{font-size:11px;color:var(--muted);font-family:'IBM Plex Mono', monospace;}
+  .eq-band input[type=range]{
+    writing-mode:vertical-lr;
+    direction:rtl;
+    width:22px;height:110px;accent-color:var(--accent);
+  }
+  .eq-band .eq-val{font-family:'IBM Plex Mono', monospace;font-size:11.5px;color:var(--accent-deep);}
+  .eq-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px;}
+  .btn{
+    font-family:'Space Grotesk', sans-serif;font-weight:600;font-size:13.5px;
+    background:#fff;border:1px solid var(--line);color:var(--text);
+    padding:10px 16px;border-radius:9px;cursor:pointer;
+  }
+  .btn.solid{background:var(--accent);color:#fff;border:none;}
+  .btn.solid:hover{background:var(--accent-deep);}
+  .btn:hover{border-color:var(--accent-soft);}
+  .preset-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+  .preset-btn{
+    font-family:'IBM Plex Mono', monospace;font-size:11.5px;
+    background:var(--glass-panel-2);border:1px solid var(--glass-border);color:var(--text);
+    padding:7px 12px;border-radius:20px;cursor:pointer;
+    backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+    box-shadow:0 6px 16px -10px rgba(108,63,197,0.3);
+  }
+  .preset-btn:hover{border-color:var(--accent);}
+  .source-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+
+  .face-vol-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;}
+  @media (max-width:640px){ .face-vol-grid{grid-template-columns:1fr;} }
+  .face-vol-stack{display:flex;flex-direction:column;gap:14px;max-width:480px;margin:0 auto;}
+  .os-icons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+  .os-badge{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    background:var(--glass-panel-2);border:1px solid var(--glass-border);border-radius:14px;
+    padding:16px 20px;min-width:110px;
+    backdrop-filter:blur(12px) saturate(160%);-webkit-backdrop-filter:blur(12px) saturate(160%);
+    box-shadow:0 10px 24px -12px rgba(108,63,197,0.32);
+  }
+  .os-svg{width:44px;height:24px;}
+  .os-bar-track{width:76px;height:7px;background:#fff;border:1px solid var(--line);border-radius:5px;overflow:hidden;}
+  .os-bar-fill{height:100%;width:0%;background:var(--accent);transition:width 0.15s ease;}
+  .os-label{font-family:'IBM Plex Mono', monospace;font-size:11.5px;color:var(--muted);text-align:center;}
+
+  /* ---------- hearing test / audiogram page ---------- */
+  .test-stage{
+    background:#fff;border:1px solid var(--line);border-radius:16px;
+    padding:34px 28px;text-align:center;
+  }
+  .test-freq{
+    font-family:'Space Grotesk', sans-serif;font-weight:700;font-size:38px;
+    color:var(--accent-deep);margin-bottom:6px;
+  }
+  .test-sub{color:var(--muted);font-size:13.5px;margin-bottom:22px;}
+  .progress-track{
+    width:100%;max-width:420px;margin:0 auto 26px;height:8px;border-radius:6px;
+    background:var(--glass-panel-2);overflow:hidden;
+    backdrop-filter:blur(8px) saturate(160%);-webkit-backdrop-filter:blur(8px) saturate(160%);
+    box-shadow:0 4px 12px -8px rgba(108,63,197,0.3);
+  }
+  .progress-fill{height:100%;width:0%;background:var(--accent);transition:width 0.1s linear;}
+  .hear-btn{
+    font-family:'Space Grotesk', sans-serif;font-weight:700;font-size:17px;
+    background:var(--accent);color:#fff;border:none;
+    padding:18px 40px;border-radius:16px;cursor:pointer;
+    box-shadow:0 12px 26px -12px rgba(139,92,246,0.6);
+  }
+  .hear-btn:active{transform:translateY(1px);}
+  .test-step-count{
+    font-family:'IBM Plex Mono', monospace;font-size:12px;color:var(--muted);margin-top:18px;
+  }
+  .test-idle, .test-results{text-align:center;padding:10px 4px;}
+  .test-idle p, .test-results p{color:var(--muted);font-size:14px;line-height:1.6;max-width:520px;margin:0 auto 20px;}
+  .audiogram-wrap{
+    background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px;
+  }
+  .audiogram-legend{
+    display:flex;gap:18px;justify-content:center;margin-top:10px;flex-wrap:wrap;
+    font-size:12px;color:var(--muted);font-family:'IBM Plex Mono', monospace;
+  }
+  .legend-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 120 64" xmlns="http://www.w3.org/2000/svg" aria-label="OtoCorrect logo">
+      <path d="M 22 30 Q 60 -6 98 30" fill="none" stroke="#CBB2F0" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="22" cy="38" r="16" fill="none" stroke="#CBB2F0" stroke-width="8"/>
+      <circle cx="98" cy="38" r="16" fill="none" stroke="#CBB2F0" stroke-width="8"/>
+      <path d="M 48 26 Q 60 46 72 26" fill="none" stroke="#CBB2F0" stroke-width="8" stroke-linecap="round"/>
+      <line x1="60" y1="34" x2="60" y2="60" stroke="#CBB2F0" stroke-width="8" stroke-linecap="round"/>
+    </svg>
+    <div class="brand-name">OtoCorrect</div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-view="home" id="tabHome">Home</button>
+    <button class="tab-btn" data-view="distance" id="tabDistance">Distance</button>
+    <button class="tab-btn" data-view="sound" id="tabSound">Sound</button>
+    <button class="tab-btn" data-view="test" id="tabTest">Hearing Test</button>
+    <button class="tab-btn" data-view="connections" id="tabConnections">App Connections</button>
+  </nav>
+  <div class="auth-area">
+    <button class="auth-btn" id="signInBtn">Sign in</button>
+    <div class="auth-chip" id="authChip" style="display:none;">
+      <img id="authAvatar" class="auth-avatar" alt="">
+      <span id="authName">—</span>
+      <button class="auth-signout" id="signOutBtn">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="googleModal">
+  <div class="modal-card" style="max-width:440px;">
+    <div class="modal-title">Sign in with Google</div>
+    <div class="modal-body">
+      <p style="margin-top:0;">To enable Google sign-in, paste your own Google OAuth Client ID below (from <strong>console.cloud.google.com</strong> → APIs &amp; Services → Credentials → OAuth client ID, type "Web application"). Add this page's URL under "Authorized JavaScript origins".</p>
+      <div class="range-row" style="margin-bottom:10px;">
+        <input type="text" id="googleClientId" class="wide" placeholder="Google OAuth Client ID" style="width:100%;">
+      </div>
+      <button class="btn solid" id="googleClientIdSubmit">Continue</button>
+      <div id="googleBtnContainer" style="margin-top:14px;"></div>
+      <p style="font-size:12px;color:var(--muted);margin-top:14px;margin-bottom:0;">OtoCorrect has no backend or database — signing in just confirms your Google identity for this browser tab. Nothing is saved once you close or reload the page.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn ghost" id="googleModalClose">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ HOME PAGE ============ -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="hero-waves" aria-hidden="true">
+        <svg class="wave-svg" viewBox="0 0 960 320" preserveAspectRatio="none">
+          <path class="wave-path wave-1" d="M0,150 C 80,90 160,210 240,150 C 320,90 400,210 480,150 C 560,90 640,210 720,150 C 800,90 880,210 960,150" fill="none"/>
+          <path class="wave-path wave-2" d="M0,190 C 90,140 180,240 270,190 C 360,140 450,240 540,190 C 630,140 720,240 810,190 C 870,160 920,175 960,190" fill="none"/>
+          <path class="wave-path wave-3" d="M0,110 C 120,170 240,50 360,110 C 480,170 600,50 720,110 C 840,170 960,50 960,110" fill="none"/>
+          <path class="wave-path wave-4" d="M0,230 C 100,200 200,260 300,230 C 400,200 500,260 600,230 C 700,200 800,260 900,230 C 930,222 945,226 960,230" fill="none"/>
+        </svg>
+        <div class="eq-bars" id="heroEqBars"><!-- filled by JS --></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">OtoCorrect</div>
+        <h1>Your hearing.<br><span class="soft">Your way.</span></h1>
+        <p class="hero-tagline">We are OtoCorrect, a tool that can help you with your hearing needs from the comfort of your own home.</p>
+        <p class="hero-sub">OtoCorrect helps you find the right distance for a conversation, shape sound to fit your own ears, and check how you're hearing across the frequency range — all running privately in this browser tab.</p>
+        <div class="hero-ctas">
+          <button class="hero-cta solid" id="heroStart">Start with Distance</button>
+          <button class="hero-cta" id="heroTest">Take the hearing test</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mission-grid">
+      <div class="mission-card">
+        <div class="mc-icon">1</div>
+        <h3>Distance</h3>
+        <p>Uses your camera to estimate how far you're sitting from the screen, and flags whether you're in a comfortable range for face-to-face hearing and lip visibility.</p>
+        <button data-goto="distance">Open Distance →</button>
+      </div>
+      <div class="mission-card">
+        <div class="mc-icon">2</div>
+        <h3>Sound</h3>
+        <p>A simple on-page equalizer so you can shape a test sound to what's clearest for you — boost speech frequencies, ease off the highs, or build your own curve.</p>
+        <button data-goto="sound">Open Sound →</button>
+      </div>
+      <div class="mission-card">
+        <div class="mc-icon">3</div>
+        <h3>Hearing Test</h3>
+        <p>A one-minute, self-guided check across six frequencies. Click as soon as you hear each tone, and see the results laid out as a simple audiogram.</p>
+        <button data-goto="test">Open Hearing Test →</button>
+      </div>
+    </div>
+
+    <div class="home-note">Everything here runs locally in your browser tab — audio and video are never recorded or uploaded. OtoCorrect is a set of everyday comfort tools, not a diagnostic or clinical device, and it doesn't replace advice from an audiologist or hearing care professional.</div>
+  </section>
+
+  <!-- ============ DISTANCE PAGE ============ -->
+  <section class="view" id="view-distance">
+    <div class="page-head">
+      <div class="page-eyebrow">Distance — camera-guided hearing range</div>
+      <h2>Find your hearing sweet spot</h2>
+      <p>Center your face in the frame. OtoCorrect estimates how far you are from the camera and flags whether you're sitting in a generally recommended range for clear face-to-face hearing and lip visibility — useful for conversations, video calls, or hearing device fitting checks. Nothing is recorded or uploaded; video is processed locally in this tab.</p>
+    </div>
+
+    <div class="stack">
+      <div class="panel">
+        <div class="stage" id="stage">
+          <video id="video" autoplay playsinline muted></video>
+          <canvas class="overlay" id="overlay"></canvas>
+          <div class="stage-msg" id="stageMsg">
+            <div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;margin-bottom:6px;">Camera access needed</div>
+              <div>OtoCorrect needs your camera to estimate distance. Nothing is recorded or sent anywhere — it all stays in this browser tab. Your browser will show its own permission prompt — click Allow there.</div>
+              <button id="startBtn">Turn on camera</button>
+            </div>
+          </div>
+        </div>
+        <div class="status-line">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Waiting for camera…</span>
+        </div>
+        <div class="readout" id="readoutText">—</div>
+      </div>
+
+      <div class="panel">
+        <div class="settings" style="margin-top:0;padding-top:0;border-top:none;">
+          <div class="settings-title">General recommended range</div>
+          <div class="range-row">
+            <span>Min</span>
+            <input type="number" id="minRange" value="90">
+            <span>Max</span>
+            <input type="number" id="maxRange" value="150">
+            <span id="unitLabel">cm</span>
+          </div>
+          <div class="unit-toggle">
+            <button id="cmBtn" class="active">cm</button>
+            <button id="ftBtn">ft</button>
+          </div>
+
+          <button class="adv-toggle" id="advToggle">Detection not working well? Tune sensitivity</button>
+          <div class="adv-row" id="advRow">
+            <span>Sensitivity</span>
+            <input type="range" id="sensSlider" min="0.1" max="0.7" step="0.05" value="0.3">
+            <span id="sensVal">0.30</span>
+          </div>
+        </div>
+
+        <div class="settings">
+          <div class="settings-title">Volume by distance</div>
+          <div class="range-row" style="margin-bottom:6px;">
+            <label class="switch">
+              <input type="checkbox" id="volToggle">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+            <span id="volToggleLabel" style="color:var(--muted);font-size:13px;">Off</span>
+          </div>
+          <div class="metric-hint" style="margin-bottom:10px;">Closer to the camera → quieter. Farther away → louder. Applies to whichever of the outputs below are turned on.</div>
+          <div class="range-row" id="testToneRow" style="display:none;">
+            <button class="adv-toggle" id="toneBtn" style="text-decoration:none;border:1px solid var(--line);padding:6px 12px;border-radius:6px;">Play test tone</button>
+            <span class="metric-value" id="volReadout" style="min-width:auto;">vol —</span>
+          </div>
+          <div class="metric-hint" style="margin-top:8px;">
+            The test tone only controls audio played on this page. Browsers don't allow a website to change your computer's overall system volume.
+          </div>
+        </div>
+
+        <div class="settings">
+          <div class="settings-title"><span class="dot-sm"></span> Spotify playback volume</div>
+          <div id="spotifyPreConnect">
+            <div class="metric-hint" style="margin-bottom:10px;">Connect your own Spotify app to let distance control the volume of whatever is playing on your active Spotify device.</div>
+            <div class="range-row" style="margin-bottom:8px;">
+              <input type="text" id="spotifyClientId" class="wide" placeholder="Spotify Client ID">
+            </div>
+            <div class="range-row" style="margin-bottom:8px;">
+              <span>Redirect URI to register:</span>
+            </div>
+            <div class="range-row">
+              <input type="text" id="spotifyRedirectUri" class="wide" readonly style="width:100%;">
+            </div>
+            <button class="connect-btn" id="spotifyConnectBtn" style="margin-top:10px;">Connect Spotify</button>
+          </div>
+          <div id="spotifyPostConnect" style="display:none;">
+            <div class="range-row" style="margin-bottom:8px;justify-content:space-between;">
+              <span style="color:var(--text);font-size:13px;font-weight:500;">Connected to Spotify</span>
+              <button class="connect-btn disconnect" id="spotifyDisconnectBtn">Disconnect</button>
+            </div>
+            <div class="range-row">
+              <label class="switch">
+                <input type="checkbox" id="spotifyVolToggle">
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+              </label>
+              <span id="spotifyVolToggleLabel" style="color:var(--muted);font-size:13px;">Off</span>
+              <span class="metric-value" id="spotifyVolReadout" style="min-width:auto;">vol —</span>
+            </div>
+          </div>
+          <div class="sp-status" id="spotifyStatus"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="settings-title" style="margin-bottom:14px;">Positioning</div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-left">
+              <div class="metric-dot" id="dot-distance"></div>
+              <div>
+                <div class="metric-name">Distance</div>
+                <div class="metric-hint" id="hint-distance">Move closer or farther</div>
+              </div>
+            </div>
+            <div class="metric-value" id="val-distance">— cm</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-left">
+              <div class="metric-dot" id="dot-h"></div>
+              <div>
+                <div class="metric-name">Horizontal centering</div>
+                <div class="metric-hint" id="hint-h">Shift left or right</div>
+              </div>
+            </div>
+            <div class="metric-value" id="val-h">—</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-left">
+              <div class="metric-dot" id="dot-v"></div>
+              <div>
+                <div class="metric-name">Vertical centering</div>
+                <div class="metric-hint" id="hint-v">Adjust camera height</div>
+              </div>
+            </div>
+            <div class="metric-value" id="val-v">—</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-left">
+              <div class="metric-dot" id="dot-light"></div>
+              <div>
+                <div class="metric-name">Lighting</div>
+                <div class="metric-hint" id="hint-light">Face needs even light</div>
+              </div>
+            </div>
+            <div class="metric-value" id="val-light">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="volModal">
+      <div class="modal-card">
+        <div class="modal-title">Let OtoCorrect adjust in-page volume?</div>
+        <div class="modal-body">
+          Turning this on lets OtoCorrect raise or lower the volume of audio played <em>on this page</em> (like the test tone above) based on how far you are from the camera — quieter as you move closer, louder as you move farther away.
+          <br><br>
+          This can't touch your computer's system volume or any other app or tab — only sound played here.
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn ghost" id="volDeny">Not now</button>
+          <button class="modal-btn solid" id="volAllow">Allow</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="spotifyVolModal">
+      <div class="modal-card">
+        <div class="modal-title">Let OtoCorrect adjust Spotify volume?</div>
+        <div class="modal-body">
+          Turning this on lets OtoCorrect raise or lower the playback volume on your <em>active Spotify device</em> based on how far you are from the camera, using Spotify's official volume control API.
+          <br><br>
+          It can only change volume on the device that's currently playing — it can't start, stop, skip, or change what's playing, and it can't touch your system volume.
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn ghost" id="spotifyVolDeny">Not now</button>
+          <button class="modal-btn spotify-solid" id="spotifyVolAllow">Allow</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="foot">
+      Distance is an approximation. It assumes an average adult face width (~14 cm) and a typical webcam field of view, so treat the number as a general guide rather than a clinical measurement. The default 90–150 cm (≈3–5 ft) range reflects common guidance for comfortable face-to-face hearing and lip-reading distance — adjust it above for your own setup. Spotify integration uses Spotify's official Web API under your own developer credentials and is not affiliated with or endorsed by Spotify.
+    </footer>
+  </section>
+
+  <!-- ============ SOUND CORRECTOR PAGE ============ -->
+  <section class="view" id="view-sound">
+    <div class="page-head">
+      <div class="page-eyebrow">Sound — six-band equalizer</div>
+      <h2>Shape sound to your ears</h2>
+      <p>Play a built-in test sound and reshape it with six frequency bands, from low bass up through treble. Try a preset for a common comfort curve, or drag each slider to build your own.</p>
+    </div>
+
+    <div class="panel-white" style="margin-bottom:20px;">
+      <div class="settings-title" style="margin-bottom:14px;">Face-controlled volume</div>
+      <div class="face-vol-stack">
+        <div class="stage" id="soundStage" style="aspect-ratio:4/3;">
+          <video id="soundVideo" autoplay playsinline muted></video>
+          <canvas class="overlay" id="soundOverlay"></canvas>
+          <div class="stage-msg" id="soundStageMsg">
+            <div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;margin-bottom:6px;">Camera access needed</div>
+              <div style="font-size:13px;">Turn on your camera to let distance control the volume of the sound above — closer is quieter, farther is louder.</div>
+              <button id="soundStartBtn">Turn on camera</button>
+            </div>
+          </div>
+        </div>
+        <div class="readout" id="soundReadout" style="margin-top:10px;">—</div>
+        <div class="os-icons">
+          <div class="os-badge">
+            <svg class="os-svg" viewBox="0 0 44 24">
+              <path d="M4 9 L4 15 L9 15 L15 20 L15 4 L9 9 Z" fill="var(--text)"/>
+            </svg>
+            <div class="os-bar-track"><div class="os-bar-fill" id="macBarFill"></div></div>
+            <div class="os-label">macOS</div>
+          </div>
+          <div class="os-badge">
+            <svg class="os-svg" viewBox="0 0 44 24">
+              <rect x="2" y="10" width="40" height="4" rx="2" fill="var(--line)"/>
+              <rect id="winBarFill" x="2" y="10" width="0" height="4" rx="2" fill="var(--accent)"/>
+            </svg>
+            <div class="os-label" id="winVolLabel">WindowsOs · —%</div>
+          </div>
+        </div>
+      </div>
+      <div class="metric-hint" style="margin-top:14px;">
+        Turning this on lets distance control the volume of the sound played below on this page only — it can't touch your computer's system volume, and nothing from the camera is recorded or sent anywhere.
+      </div>
+    </div>
+
+    <div class="eq-grid">
+      <div class="panel-white">
+        <div class="source-row">
+          <button class="btn" id="sourceNoise">Pink noise</button>
+          <button class="btn" id="sourceTone">Tone sweep</button>
+          <button class="btn" id="sourceChord">Music-like chord</button>
+        </div>
+        <div class="eq-controls">
+          <button class="btn solid" id="eqPlayBtn">Play</button>
+          <span class="metric-hint" id="sourceLabel">Source: pink noise</span>
+        </div>
+
+        <div class="eq-bands" id="eqBands"><!-- filled by JS --></div>
+
+        <div class="preset-row">
+          <button class="preset-btn" data-preset="flat">Flat</button>
+          <button class="preset-btn" data-preset="speech">Boost speech clarity</button>
+          <button class="preset-btn" data-preset="highs">Boost highs</button>
+          <button class="preset-btn" data-preset="warm">Warm / ease highs</button>
+        </div>
+
+        <div class="metric-hint" style="margin-top:16px;">
+          This shapes only the built-in test sound on this page — it doesn't change your system volume, microphone, or any other app.
+        </div>
+      </div>
+    </div>
+
+    <footer class="foot">
+      This equalizer is a comfort tool for exploring what frequency balance sounds clearest to you — it isn't a calibrated or clinical correction, and it doesn't process audio from other apps or tabs.
+    </footer>
+  </section>
+
+  <!-- ============ HEARING TEST / AUDIOGRAM PAGE ============ -->
+  <section class="view" id="view-test">
+    <div class="page-head">
+      <div class="page-eyebrow">Hearing Test — self-guided check</div>
+      <h2>Built-in audiogram</h2>
+      <p>A short check across six frequencies (250 Hz–8 kHz), followed by ten spoken words at varying volumes. Put on headphones in a quiet room, set a comfortable volume, and click the button the moment you hear each tone. When the word portion starts, we'll ask for one-time microphone access — words are spoken aloud, never shown on screen, so just say back what you hear. Full results appear together at the end.</p>
+    </div>
+
+    <div id="testIdle" class="test-idle">
+      <div class="panel-white">
+        <div class="unit-toggle" id="testModeToggle" style="margin-bottom:16px;justify-content:center;">
+          <button class="active" id="modeBothBtn" data-mode="both">Both ears</button>
+          <button id="modeIndividualBtn" data-mode="individual">Individual ears</button>
+        </div>
+        <p id="testModeDesc">One pass through all six tones, played to both ears at once — good for a quick, general check. Results plot as a single line.</p>
+        <button class="btn solid" id="startTestBtn">Start test</button>
+      </div>
+    </div>
+
+    <div id="testSwitchEar" class="test-idle" style="display:none;">
+      <div class="panel-white">
+        <h3 style="font-family:'Space Grotesk',sans-serif;margin-top:0;">Right ear done — now the left</h3>
+        <p>Switch your earbuds/headphones (or cover your right ear and uncover your left) so the tones reach only your left ear, then continue.</p>
+        <button class="btn solid" id="continueLeftBtn">Continue with left ear</button>
+      </div>
+    </div>
+
+    <div id="testRunning" class="test-stage" style="display:none;">
+      <div class="test-step-count" id="testEarLabel" style="margin-top:0;margin-bottom:10px;">Both ears</div>
+      <div class="test-freq" id="testFreqLabel">— Hz</div>
+      <div class="test-sub" id="testSubLabel">Listen closely…</div>
+      <div class="progress-track"><div class="progress-fill" id="testProgressFill"></div></div>
+      <button class="hear-btn" id="hearBtn">I hear it</button>
+      <div class="test-step-count" id="testStepCount">Step 1 of 6</div>
+    </div>
+
+    <div id="testResults" class="test-results" style="display:none;">
+      <div class="panel-white">
+        <h3 style="font-family:'Space Grotesk',sans-serif;margin-top:0;">Your results</h3>
+        <p id="resultsSummary">—</p>
+        <div class="audiogram-wrap">
+          <svg id="audiogramSvg" viewBox="0 0 900 480" style="width:100%;height:auto;" aria-label="Pure tone audiogram chart"></svg>
+        </div>
+        <div class="eq-controls" style="margin-top:18px;justify-content:center;">
+          <button class="btn" id="retakeTestBtn">Retake test</button>
+        </div>
+      </div>
+
+      <div class="panel-white" style="margin-top:20px;">
+        <h3 style="font-family:'Space Grotesk',sans-serif;margin-top:0;">Word repetition check</h3>
+        <p style="color:var(--muted);font-size:14px;line-height:1.6;">Ten words were spoken aloud through your headphones at varying volumes — never shown on screen — and your microphone listened for what you said back.</p>
+
+        <div id="wordResultsWrap" style="display:none;">
+          <p id="wordAccuracySummary" style="font-weight:600;font-family:'Space Grotesk',sans-serif;"></p>
+          <table class="word-table">
+            <thead><tr><th>Word</th><th>Volume</th><th>You said</th><th>Result</th></tr></thead>
+            <tbody id="wordTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="wordRunning" class="test-stage" style="display:none;">
+      <div class="test-step-count" id="wordStepCount" style="margin-top:0;margin-bottom:10px;">Word 1 of 10</div>
+      <div class="test-freq" id="wordLevelLabel" style="font-size:36px;">🔊</div>
+      <div class="test-sub" id="wordStatus">Listen closely…</div>
+      <div class="progress-track"><div class="progress-fill" id="wordProgressFill"></div></div>
+      <button class="adv-toggle" id="wordSkipBtn" style="margin-top:14px;">Skip this word</button>
+    </div>
+
+    <footer class="foot">
+      This is a simple, uncalibrated self-check — actual loudness depends on your device and headphone volume, so it isn't a clinical hearing test and can't diagnose hearing loss. The severity bands shown are standard clinical reference ranges, but this tool cannot verify true hearing thresholds the way calibrated audiometric equipment can. Speech recognition accuracy also varies by browser, accent, and background noise, so the word check is a rough comfort measure, not a diagnostic word-recognition score. If you have ongoing concerns about your hearing, please see an audiologist or hearing care professional.
+    </footer>
+  </section>
+
+  <!-- ============ APP CONNECTIONS PAGE ============ -->
+  <section class="view" id="view-connections">
+    <div class="page-head">
+      <div class="page-eyebrow">App Connections</div>
+      <h2>Connect OtoCorrect to the apps you already use</h2>
+      <p>Link these so OtoCorrect's distance and sound tools can work inside the apps where you actually talk to people. These are placeholder connections for now — the buttons below don't perform a real account link yet, they're here to show how it'll work.</p>
+    </div>
+
+    <div class="conn-grid">
+      <div class="panel-white conn-card">
+        <div class="conn-icon" style="background:#1DB95422;color:#1DB954;">♪</div>
+        <h3>Spotify</h3>
+        <p>Let distance control the volume of whatever's playing on your active Spotify device.</p>
+        <button class="connect-btn" id="connSpotifyBtn" data-connected="false">Connect</button>
+        <div class="metric-hint" style="margin-top:8px;">A fully working version of this already lives on the <strong>Distance</strong> and <strong>Sound</strong> pages — this button is a placeholder for the unified hub.</div>
+      </div>
+
+      <div class="panel-white conn-card">
+        <div class="conn-icon" style="background:#5059C922;color:#5059C9;">▦</div>
+        <h3>Microsoft Teams</h3>
+        <p>Adjust call volume automatically based on how far you're sitting from your camera during meetings.</p>
+        <button class="connect-btn" id="connTeamsBtn" data-connected="false">Connect</button>
+        <div class="metric-hint" style="margin-top:8px;">Coming soon — button is a visual placeholder only.</div>
+      </div>
+
+      <div class="panel-white conn-card">
+        <div class="conn-icon" style="background:#2D8CFF22;color:#2D8CFF;">◔</div>
+        <h3>Zoom</h3>
+        <p>Same idea for Zoom calls — distance-based volume without touching your system settings.</p>
+        <button class="connect-btn" id="connZoomBtn" data-connected="false">Connect</button>
+        <div class="metric-hint" style="margin-top:8px;">Coming soon — button is a visual placeholder only.</div>
+      </div>
+    </div>
+
+    <footer class="foot">
+      None of the buttons above perform real authentication yet — no data is sent to Spotify, Microsoft, or Zoom by clicking them. They exist to sketch out the app-connections hub; real account linking (OAuth, permission scopes, etc.) would need to be built per service.
+    </footer>
+  </section>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script>
+(function(){
+  // ---------------- tabs ----------------
+  const tabs = {
+    home: document.getElementById('tabHome'),
+    distance: document.getElementById('tabDistance'),
+    sound: document.getElementById('tabSound'),
+    test: document.getElementById('tabTest'),
+    connections: document.getElementById('tabConnections')
+  };
+  const views = {
+    home: document.getElementById('view-home'),
+    distance: document.getElementById('view-distance'),
+    sound: document.getElementById('view-sound'),
+    test: document.getElementById('view-test'),
+    connections: document.getElementById('view-connections')
+  };
+  function showView(name){
+    Object.keys(views).forEach(k => {
+      views[k].classList.toggle('active', k === name);
+      tabs[k].classList.toggle('active', k === name);
+    });
+  }
+  Object.keys(tabs).forEach(k => tabs[k].addEventListener('click', () => showView(k)));
+
+  // ---------------- app connections (placeholder buttons) ----------------
+  ['connSpotifyBtn','connTeamsBtn','connZoomBtn'].forEach(id => {
+    const btn = document.getElementById(id);
+    if(!btn) return;
+    btn.addEventListener('click', () => {
+      const connected = btn.getAttribute('data-connected') === 'true';
+      if(connected){
+        btn.setAttribute('data-connected','false');
+        btn.textContent = 'Connect';
+        btn.classList.remove('disconnect');
+      } else {
+        btn.setAttribute('data-connected','true');
+        btn.textContent = 'Connected ✓';
+        btn.classList.add('disconnect');
+      }
+    });
+  });
+
+  // ---------------- Google sign-in (session-only, no backend) ----------------
+  const signInBtn = document.getElementById('signInBtn');
+  const authChip = document.getElementById('authChip');
+  const authAvatar = document.getElementById('authAvatar');
+  const authName = document.getElementById('authName');
+  const signOutBtn = document.getElementById('signOutBtn');
+  const googleModal = document.getElementById('googleModal');
+  const googleModalClose = document.getElementById('googleModalClose');
+  const googleClientId = document.getElementById('googleClientId');
+  const googleClientIdSubmit = document.getElementById('googleClientIdSubmit');
+  const googleBtnContainer = document.getElementById('googleBtnContainer');
+
+  let googleScriptLoaded = false;
+  function loadGoogleScript(cb){
+    if(googleScriptLoaded && window.google && window.google.accounts){ cb(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.async = true;
+    s.defer = true;
+    s.onload = () => { googleScriptLoaded = true; cb(); };
+    document.head.appendChild(s);
+  }
+
+  function decodeJwt(token){
+    try{
+      const payload = token.split('.')[1];
+      const json = decodeURIComponent(atob(payload.replace(/-/g,'+').replace(/_/g,'/')).split('').map(c =>
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join(''));
+      return JSON.parse(json);
+    }catch(e){ return null; }
+  }
+
+  function handleCredentialResponse(response){
+    const data = decodeJwt(response.credential);
+    if(!data) return;
+    authName.textContent = data.name || data.email || 'Signed in';
+    authAvatar.src = data.picture || '';
+    signInBtn.style.display = 'none';
+    authChip.style.display = 'flex';
+    googleModal.classList.remove('show');
+  }
+  window.handleCredentialResponse = handleCredentialResponse;
+
+  signInBtn.addEventListener('click', () => { googleModal.classList.add('show'); });
+  googleModalClose.addEventListener('click', () => { googleModal.classList.remove('show'); });
+  googleClientIdSubmit.addEventListener('click', () => {
+    const id = googleClientId.value.trim();
+    if(!id) return;
+    loadGoogleScript(() => {
+      try{
+        google.accounts.id.initialize({ client_id: id, callback: handleCredentialResponse });
+        googleBtnContainer.innerHTML = '';
+        google.accounts.id.renderButton(googleBtnContainer, { theme:'outline', size:'large', width:320 });
+      }catch(e){
+        googleBtnContainer.textContent = 'Could not initialize Google sign-in with that Client ID.';
+      }
+    });
+  });
+  signOutBtn.addEventListener('click', () => {
+    if(window.google && google.accounts) { try{ google.accounts.id.disableAutoSelect(); }catch(e){} }
+    authChip.style.display = 'none';
+    signInBtn.style.display = 'inline-block';
+  });
+
+  // decorative hero equalizer bars
+  (function buildHeroEqBars(){
+    const container = document.getElementById('heroEqBars');
+    if(!container) return;
+    const count = 22;
+    for(let i=0;i<count;i++){
+      const bar = document.createElement('span');
+      const h = 14 + Math.random()*46;
+      const dur = (1.1 + Math.random()*1.3).toFixed(2);
+      const delay = (Math.random()*1.4).toFixed(2);
+      bar.style.height = h + 'px';
+      bar.style.animationDuration = dur + 's';
+      bar.style.animationDelay = '-' + delay + 's';
+      container.appendChild(bar);
+    }
+  })();
+  document.getElementById('heroStart').addEventListener('click', () => showView('distance'));
+  document.getElementById('heroTest').addEventListener('click', () => showView('test'));
+  document.querySelectorAll('[data-goto]').forEach(btn => {
+    btn.addEventListener('click', () => showView(btn.getAttribute('data-goto')));
+  });
+
+  // ---------------- shared audio context ----------------
+  let sharedCtx = null;
+  function ensureSharedAudio(){
+    if(!sharedCtx){
+      sharedCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(sharedCtx.state === 'suspended') sharedCtx.resume();
+    return sharedCtx;
+  }
+
+  // ---------------- distance / monitor wiring ----------------
+  const video = document.getElementById('video');
+  const overlay = document.getElementById('overlay');
+  const stageMsg = document.getElementById('stageMsg');
+  const startBtn = document.getElementById('startBtn');
+  const statusDot = document.getElementById('statusDot');
+  const statusText = document.getElementById('statusText');
+  const readoutText = document.getElementById('readoutText');
+
+  const dotDistance = document.getElementById('dot-distance');
+  const valDistance = document.getElementById('val-distance');
+  const hintDistance = document.getElementById('hint-distance');
+  const dotH = document.getElementById('dot-h');
+  const valH = document.getElementById('val-h');
+  const hintH = document.getElementById('hint-h');
+  const dotV = document.getElementById('dot-v');
+  const valV = document.getElementById('val-v');
+  const hintV = document.getElementById('hint-v');
+  const dotLight = document.getElementById('dot-light');
+  const valLight = document.getElementById('val-light');
+  const hintLight = document.getElementById('hint-light');
+
+  const minInput = document.getElementById('minRange');
+  const maxInput = document.getElementById('maxRange');
+  const unitLabel = document.getElementById('unitLabel');
+  const cmBtn = document.getElementById('cmBtn');
+  const ftBtn = document.getElementById('ftBtn');
+
+  const advToggle = document.getElementById('advToggle');
+  const advRow = document.getElementById('advRow');
+  const sensSlider = document.getElementById('sensSlider');
+  const sensVal = document.getElementById('sensVal');
+
+  advToggle.addEventListener('click', () => advRow.classList.toggle('show'));
+  sensSlider.addEventListener('input', () => { sensVal.textContent = parseFloat(sensSlider.value).toFixed(2); });
+
+  // --- in-page, distance-based volume (test tone) ---
+  const volToggle = document.getElementById('volToggle');
+  const volToggleLabel = document.getElementById('volToggleLabel');
+  const testToneRow = document.getElementById('testToneRow');
+  const toneBtn = document.getElementById('toneBtn');
+  const volReadout = document.getElementById('volReadout');
+  const volModal = document.getElementById('volModal');
+  const volAllow = document.getElementById('volAllow');
+  const volDeny = document.getElementById('volDeny');
+
+  let volumeFeatureAllowed = false;
+  let volumeFeatureOn = false;
+  let audioCtx = null, gainNode = null, oscNode = null, toneAudioPlaying = false;
+
+  volToggle.addEventListener('change', () => {
+    if(volToggle.checked && !volumeFeatureAllowed){
+      volToggle.checked = false;
+      volModal.classList.add('show');
+      return;
+    }
+    volumeFeatureOn = volToggle.checked;
+    volToggleLabel.textContent = volumeFeatureOn ? 'On' : 'Off';
+    testToneRow.style.display = volumeFeatureOn ? 'flex' : 'none';
+    if(!volumeFeatureOn) stopTone();
+  });
+
+  volAllow.addEventListener('click', () => {
+    volumeFeatureAllowed = true;
+    volModal.classList.remove('show');
+    volToggle.checked = true;
+    volumeFeatureOn = true;
+    volToggleLabel.textContent = 'On';
+    testToneRow.style.display = 'flex';
+  });
+  volDeny.addEventListener('click', () => {
+    volModal.classList.remove('show');
+    volToggle.checked = false;
+  });
+
+  function ensureAudio(){
+    if(!audioCtx){
+      audioCtx = ensureSharedAudio();
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0.5;
+      gainNode.connect(audioCtx.destination);
+    }
+  }
+
+  function startTone(){
+    ensureAudio();
+    if(oscNode) return;
+    oscNode = audioCtx.createOscillator();
+    oscNode.type = 'sine';
+    oscNode.frequency.value = 330;
+    oscNode.connect(gainNode);
+    oscNode.start();
+    toneAudioPlaying = true;
+    toneBtn.textContent = 'Stop test tone';
+  }
+  function stopTone(){
+    if(oscNode){
+      try{ oscNode.stop(); } catch(e){}
+      oscNode.disconnect();
+      oscNode = null;
+    }
+    toneAudioPlaying = false;
+    toneBtn.textContent = 'Play test tone';
+  }
+  toneBtn.addEventListener('click', () => {
+    if(toneAudioPlaying) stopTone(); else startTone();
+  });
+
+  const VOL_NEAR_CM = 40;
+  const VOL_FAR_CM = 220;
+  const VOL_FLOOR = 0.05;
+  const VOL_CEIL = 1.0;
+  function volumeForDistance(distanceCm){
+    const t = (distanceCm - VOL_NEAR_CM) / (VOL_FAR_CM - VOL_NEAR_CM);
+    const clampedT = Math.max(0, Math.min(1, t));
+    return VOL_FLOOR + clampedT * (VOL_CEIL - VOL_FLOOR);
+  }
+
+  const RED = '#D8493D', AMBER = '#C98A24', GREEN = '#3AA179';
+
+  const AVG_FACE_WIDTH_CM = 14;
+  const ASSUMED_FOCAL_PX = 600;
+
+  let unit = 'cm';
+  cmBtn.addEventListener('click', () => setUnit('cm'));
+  ftBtn.addEventListener('click', () => setUnit('ft'));
+  function setUnit(u){
+    unit = u;
+    cmBtn.classList.toggle('active', u==='cm');
+    ftBtn.classList.toggle('active', u==='ft');
+    unitLabel.textContent = u;
+    if(u === 'ft'){
+      minInput.value = Math.round((minInput.value / 30.48) * 10) / 10;
+      maxInput.value = Math.round((maxInput.value / 30.48) * 10) / 10;
+    } else {
+      minInput.value = Math.round(minInput.value * 30.48);
+      maxInput.value = Math.round(maxInput.value * 30.48);
+    }
+  }
+
+  function rangeCm(){
+    let min = parseFloat(minInput.value) || 0;
+    let max = parseFloat(maxInput.value) || 0;
+    if(unit === 'ft'){ min *= 30.48; max *= 30.48; }
+    return [Math.min(min,max), Math.max(min,max)];
+  }
+
+  // ---------------- Spotify (PKCE, no client secret) ----------------
+  const spotifyClientIdInput = document.getElementById('spotifyClientId');
+  const spotifyRedirectUriInput = document.getElementById('spotifyRedirectUri');
+  const spotifyConnectBtn = document.getElementById('spotifyConnectBtn');
+  const spotifyDisconnectBtn = document.getElementById('spotifyDisconnectBtn');
+  const spotifyPreConnect = document.getElementById('spotifyPreConnect');
+  const spotifyPostConnect = document.getElementById('spotifyPostConnect');
+  const spotifyStatus = document.getElementById('spotifyStatus');
+  const spotifyVolToggle = document.getElementById('spotifyVolToggle');
+  const spotifyVolToggleLabel = document.getElementById('spotifyVolToggleLabel');
+  const spotifyVolReadout = document.getElementById('spotifyVolReadout');
+  const spotifyVolModal = document.getElementById('spotifyVolModal');
+  const spotifyVolAllow = document.getElementById('spotifyVolAllow');
+  const spotifyVolDeny = document.getElementById('spotifyVolDeny');
+
+  const SPOTIFY_REDIRECT_URI = window.location.origin + window.location.pathname;
+  spotifyRedirectUriInput.value = SPOTIFY_REDIRECT_URI;
+  const SPOTIFY_SCOPES = 'user-read-playback-state user-modify-playback-state';
+
+  let spotifyAccessToken = null;
+  let spotifyRefreshToken = null;
+  let spotifyTokenExpiry = 0;
+  let spotifyFeatureAllowed = false;
+  let spotifyFeatureOn = false;
+  let spotifyLastSentVolume = null;
+  let spotifyLastSentAt = 0;
+  let spotifyRateLimitedUntil = 0;
+
+  function setSpotifyStatus(msg, kind){
+    spotifyStatus.textContent = msg || '';
+    spotifyStatus.className = 'sp-status' + (kind ? ' ' + kind : '');
+  }
+
+  function randomString(len){
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let out = '';
+    const arr = new Uint8Array(len);
+    crypto.getRandomValues(arr);
+    for(let i=0;i<len;i++) out += chars[arr[i] % chars.length];
+    return out;
+  }
+  function base64url(buffer){
+    let str = '';
+    const bytes = new Uint8Array(buffer);
+    for(let i=0;i<bytes.length;i++) str += String.fromCharCode(bytes[i]);
+    return btoa(str).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+  async function sha256(plain){
+    const data = new TextEncoder().encode(plain);
+    return await crypto.subtle.digest('SHA-256', data);
+  }
+
+  spotifyConnectBtn.addEventListener('click', async () => {
+    const clientId = spotifyClientIdInput.value.trim();
+    if(!clientId){
+      setSpotifyStatus('Enter your Spotify app\'s Client ID first.', 'err');
+      return;
+    }
+    const verifier = randomString(64);
+    sessionStorage.setItem('otoo_sp_verifier', verifier);
+    sessionStorage.setItem('otoo_sp_client_id', clientId);
+    const challenge = base64url(await sha256(verifier));
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: clientId,
+      scope: SPOTIFY_SCOPES,
+      code_challenge_method: 'S256',
+      code_challenge: challenge,
+      redirect_uri: SPOTIFY_REDIRECT_URI
+    });
+    window.location.href = 'https://accounts.spotify.com/authorize?' + params.toString();
+  });
+
+  spotifyDisconnectBtn.addEventListener('click', () => {
+    spotifyAccessToken = null;
+    spotifyRefreshToken = null;
+    spotifyTokenExpiry = 0;
+    spotifyFeatureOn = false;
+    spotifyFeatureAllowed = false;
+    spotifyVolToggle.checked = false;
+    spotifyVolToggleLabel.textContent = 'Off';
+    sessionStorage.removeItem('otoo_sp_verifier');
+    sessionStorage.removeItem('otoo_sp_client_id');
+    spotifyPostConnect.style.display = 'none';
+    spotifyPreConnect.style.display = 'block';
+    setSpotifyStatus('Disconnected.', '');
+  });
+
+  spotifyVolToggle.addEventListener('change', () => {
+    if(spotifyVolToggle.checked && !spotifyFeatureAllowed){
+      spotifyVolToggle.checked = false;
+      spotifyVolModal.classList.add('show');
+      return;
+    }
+    spotifyFeatureOn = spotifyVolToggle.checked;
+    spotifyVolToggleLabel.textContent = spotifyFeatureOn ? 'On' : 'Off';
+  });
+  spotifyVolAllow.addEventListener('click', () => {
+    spotifyFeatureAllowed = true;
+    spotifyVolModal.classList.remove('show');
+    spotifyVolToggle.checked = true;
+    spotifyFeatureOn = true;
+    spotifyVolToggleLabel.textContent = 'On';
+  });
+  spotifyVolDeny.addEventListener('click', () => {
+    spotifyVolModal.classList.remove('show');
+    spotifyVolToggle.checked = false;
+  });
+
+  async function exchangeSpotifyCode(code){
+    const clientId = sessionStorage.getItem('otoo_sp_client_id');
+    const verifier = sessionStorage.getItem('otoo_sp_verifier');
+    if(!clientId || !verifier){
+      setSpotifyStatus('Lost the connection state after redirect — click Connect Spotify again.', 'err');
+      return;
+    }
+    try{
+      const resp = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({
+          client_id: clientId,
+          grant_type: 'authorization_code',
+          code: code,
+          redirect_uri: SPOTIFY_REDIRECT_URI,
+          code_verifier: verifier
+        })
+      });
+      const data = await resp.json();
+      if(!resp.ok){
+        setSpotifyStatus('Spotify connection failed: ' + (data.error_description || data.error || resp.status), 'err');
+        return;
+      }
+      spotifyAccessToken = data.access_token;
+      spotifyRefreshToken = data.refresh_token;
+      spotifyTokenExpiry = Date.now() + (data.expires_in * 1000);
+      spotifyClientIdInput.value = clientId;
+      spotifyPreConnect.style.display = 'none';
+      spotifyPostConnect.style.display = 'block';
+      setSpotifyStatus('Connected. Turn on the toggle below to link volume to distance.', 'ok');
+    } catch(e){
+      setSpotifyStatus('Spotify connection failed: ' + e.message, 'err');
+    }
+  }
+
+  async function refreshSpotifyToken(){
+    const clientId = sessionStorage.getItem('otoo_sp_client_id');
+    if(!spotifyRefreshToken || !clientId) return false;
+    try{
+      const resp = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({
+          client_id: clientId,
+          grant_type: 'refresh_token',
+          refresh_token: spotifyRefreshToken
+        })
+      });
+      const data = await resp.json();
+      if(!resp.ok) return false;
+      spotifyAccessToken = data.access_token;
+      if(data.refresh_token) spotifyRefreshToken = data.refresh_token;
+      spotifyTokenExpiry = Date.now() + (data.expires_in * 1000);
+      return true;
+    } catch(e){ return false; }
+  }
+
+  async function setSpotifyVolume(percent){
+    if(!spotifyAccessToken) return;
+    const now = Date.now();
+    if(now < spotifyRateLimitedUntil) return;
+    if(spotifyLastSentVolume !== null && Math.abs(percent - spotifyLastSentVolume) < 3) return;
+    if(now - spotifyLastSentAt < 700) return;
+    if(now > spotifyTokenExpiry - 5000){
+      const ok = await refreshSpotifyToken();
+      if(!ok){ setSpotifyStatus('Spotify session expired — reconnect.', 'err'); return; }
+    }
+    spotifyLastSentAt = now;
+    spotifyLastSentVolume = percent;
+    try{
+      const resp = await fetch('https://api.spotify.com/v1/me/player/volume?volume_percent=' + percent, {
+        method: 'PUT',
+        headers: {'Authorization': 'Bearer ' + spotifyAccessToken}
+      });
+      if(resp.status === 204){
+        setSpotifyStatus('Linked to distance.', 'ok');
+      } else if(resp.status === 404){
+        setSpotifyStatus('No active Spotify device — start playing something in Spotify first.', 'err');
+      } else if(resp.status === 403){
+        setSpotifyStatus('Spotify Premium is required for volume control.', 'err');
+      } else if(resp.status === 429){
+        const retryAfter = parseInt(resp.headers.get('Retry-After') || '5', 10);
+        spotifyRateLimitedUntil = Date.now() + retryAfter * 1000;
+        setSpotifyStatus('Spotify rate limit hit, backing off briefly.', 'err');
+      } else {
+        setSpotifyStatus('Spotify volume update failed (' + resp.status + ').', 'err');
+      }
+    } catch(e){
+      setSpotifyStatus('Spotify volume update failed: ' + e.message, 'err');
+    }
+  }
+
+  (function checkSpotifyRedirect(){
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const err = params.get('error');
+    if(code){
+      showView('distance');
+      exchangeSpotifyCode(code);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if(err){
+      showView('distance');
+      setSpotifyStatus('Spotify authorization was cancelled or denied.', 'err');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  })();
+
+  // ---------------- face detection loop ----------------
+  let ctx = null;
+  let lastFace = null;
+  let missCount = 0;
+  let modelsReady = false;
+  let detecting = false;
+
+  startBtn.addEventListener('click', startCamera);
+
+  const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights';
+
+  function startCamera(){
+    statusText.textContent = 'Requesting camera…';
+    navigator.mediaDevices.getUserMedia({ video: { width:640, height:480, facingMode:'user' }, audio:false })
+      .then(stream => {
+        video.srcObject = stream;
+        stageMsg.style.display = 'none';
+        return video.play();
+      })
+      .then(() => {
+        overlay.width = video.videoWidth || 640;
+        overlay.height = video.videoHeight || 480;
+        ctx = overlay.getContext('2d');
+        statusText.textContent = 'Loading face detector…';
+        return loadModels();
+      })
+      .then(() => {
+        modelsReady = true;
+        statusText.textContent = 'Looking for a face…';
+        requestAnimationFrame(drawLoop);
+        detectTick();
+      })
+      .catch(err => {
+        console.error(err);
+        if(!modelsReady && video.srcObject){
+          statusText.textContent = 'Face detector failed to load.';
+          readoutText.textContent = 'Check your network connection (the detection model loads from a CDN) and reload the page.';
+        } else {
+          statusText.textContent = 'Camera access was blocked.';
+          readoutText.textContent = 'Allow camera permission in your browser settings and reload the page.';
+        }
+      });
+  }
+
+  function loadModels(){
+    return Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL)
+    ]);
+  }
+
+  async function detectTick(){
+    if(!modelsReady) return;
+    if(video.readyState >= 2 && !detecting){
+      detecting = true;
+      try{
+        const opts = new faceapi.TinyFaceDetectorOptions({
+          inputSize: 320,
+          scoreThreshold: parseFloat(sensSlider.value)
+        });
+        const result = await faceapi.detectSingleFace(video, opts);
+        if(result && result.box && result.box.width > 20){
+          lastFace = result.box;
+          missCount = 0;
+        } else {
+          missCount++;
+          if(missCount > 6) lastFace = null;
+        }
+      } catch(e){
+        console.error('detection error', e);
+      }
+      detecting = false;
+    }
+    setTimeout(detectTick, 120);
+  }
+
+  function statusColorFor(dot, ok){
+    dot.style.background = ok ? GREEN : RED;
+  }
+
+  function drawLoop(){
+    requestAnimationFrame(drawLoop);
+    if(!ctx) return;
+    ctx.clearRect(0,0,overlay.width, overlay.height);
+
+    if(!lastFace){
+      statusDot.style.background = RED;
+      statusText.textContent = 'No face detected';
+      readoutText.textContent = 'Face the camera directly, with your face taking up a good part of the frame, in decent light.';
+      [dotDistance,dotH,dotV,dotLight].forEach(d => d.style.background = RED);
+      valDistance.textContent = '— cm';
+      valH.textContent = '—'; valV.textContent = '—'; valLight.textContent = '—';
+      if(volumeFeatureOn) volReadout.textContent = 'vol —';
+      if(spotifyFeatureOn) spotifyVolReadout.textContent = 'vol —';
+      return;
+    }
+
+    const f = lastFace;
+    const vw = overlay.width, vh = overlay.height;
+
+    const faceCenterX = vw - (f.x + f.width/2);
+    const faceCenterY = f.y + f.height/2;
+
+    const distanceCm = (AVG_FACE_WIDTH_CM * ASSUMED_FOCAL_PX) / f.width;
+    const [minCm, maxCm] = rangeCm();
+    const distOk = distanceCm >= minCm && distanceCm <= maxCm;
+    const displayDist = unit === 'ft' ? (distanceCm/30.48).toFixed(1)+' ft' : Math.round(distanceCm)+' cm';
+    valDistance.textContent = displayDist;
+    statusColorFor(dotDistance, distOk);
+    hintDistance.textContent = distOk ? 'In range' : (distanceCm < minCm ? 'Move farther away' : 'Move closer');
+
+    if(volumeFeatureOn && gainNode){
+      const level = volumeForDistance(distanceCm);
+      gainNode.gain.setTargetAtTime(level, audioCtx.currentTime, 0.15);
+      volReadout.textContent = 'vol ' + Math.round(level*100) + '%';
+    }
+    if(spotifyFeatureOn && spotifyAccessToken){
+      const level = volumeForDistance(distanceCm);
+      const pct = Math.round(level*100);
+      spotifyVolReadout.textContent = 'vol ' + pct + '%';
+      setSpotifyVolume(pct);
+    }
+
+    const hOffset = (faceCenterX - vw/2) / (vw/2);
+    const hOk = Math.abs(hOffset) < 0.18;
+    valH.textContent = (hOffset*100).toFixed(0)+'%';
+    statusColorFor(dotH, hOk);
+    hintH.textContent = hOk ? 'Centered' : (hOffset < 0 ? 'Shift right' : 'Shift left');
+
+    const vOffset = (faceCenterY - vh/2) / (vh/2);
+    const vOk = Math.abs(vOffset) < 0.2;
+    valV.textContent = (vOffset*100).toFixed(0)+'%';
+    statusColorFor(dotV, vOk);
+    hintV.textContent = vOk ? 'Centered' : (vOffset < 0 ? 'Raise camera' : 'Lower camera');
+
+    let brightness = 128;
+    try{
+      const tmp = document.createElement('canvas');
+      tmp.width = Math.max(1,Math.round(f.width));
+      tmp.height = Math.max(1,Math.round(f.height));
+      const tctx = tmp.getContext('2d');
+      tctx.drawImage(video, vw - f.x - f.width, f.y, f.width, f.height, 0, 0, tmp.width, tmp.height);
+      const data = tctx.getImageData(0,0,tmp.width,tmp.height).data;
+      let sum = 0, count = 0;
+      for(let i=0;i<data.length;i+=16){
+        sum += (data[i]+data[i+1]+data[i+2])/3;
+        count++;
+      }
+      brightness = count ? sum/count : 128;
+    } catch(e){ /* ignore, cross-origin canvas safety */ }
+    const lightOk = brightness > 75 && brightness < 205;
+    valLight.textContent = Math.round(brightness);
+    statusColorFor(dotLight, lightOk);
+    hintLight.textContent = lightOk ? 'Good lighting' : (brightness <= 75 ? 'Too dark' : 'Too bright');
+
+    const allOk = distOk && hOk && vOk && lightOk;
+    statusDot.style.background = allOk ? GREEN : (distOk ? AMBER : RED);
+    statusText.textContent = allOk ? 'Optimal position' : 'Adjusting…';
+    readoutText.textContent = 'distance ' + Math.round(distanceCm) + 'cm · target ' + Math.round(minCm) + '-' + Math.round(maxCm) + 'cm';
+
+    const boxColor = allOk ? GREEN : (distOk ? AMBER : RED);
+    ctx.save();
+    ctx.strokeStyle = boxColor;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(vw - f.x - f.width, f.y, f.width, f.height);
+
+    const cx = faceCenterX, cy = faceCenterY;
+    const t = performance.now()/1000;
+    for(let i=0;i<3;i++){
+      const phase = (t*0.6 + i/3) % 1;
+      const r = (f.width/1.3) * (0.9 + phase*0.9);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.strokeStyle = boxColor;
+      ctx.globalAlpha = (1-phase) * 0.5;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // ================= SOUND CORRECTOR =================
+  const EQ_BANDS = [
+    { freq: 125,  label: '125Hz'  },
+    { freq: 350,  label: '350Hz'  },
+    { freq: 1000, label: '1kHz'   },
+    { freq: 2000, label: '2kHz'   },
+    { freq: 4000, label: '4kHz'   },
+    { freq: 8000, label: '8kHz'   }
+  ];
+  const eqBandsEl = document.getElementById('eqBands');
+  const eqSliders = [];
+  EQ_BANDS.forEach((b, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'eq-band';
+    wrap.innerHTML =
+      '<span class="eq-val" id="eqVal'+i+'">0dB</span>' +
+      '<input type="range" min="-12" max="12" step="1" value="0" id="eqSlider'+i+'">' +
+      '<label>'+b.label+'</label>';
+    eqBandsEl.appendChild(wrap);
+    const input = wrap.querySelector('input');
+    const valSpan = wrap.querySelector('.eq-val');
+    input.addEventListener('input', () => {
+      valSpan.textContent = (input.value > 0 ? '+' : '') + input.value + 'dB';
+      if(eqFilters[i]) eqFilters[i].gain.setTargetAtTime(parseFloat(input.value), soundCtx().currentTime, 0.05);
+    });
+    eqSliders.push(input);
+  });
+
+  const PRESETS = {
+    flat:   [0,0,0,0,0,0],
+    speech: [-3,2,5,6,3,-1],
+    highs:  [-4,-2,0,3,7,9],
+    warm:   [3,2,0,-2,-4,-6]
+  };
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const vals = PRESETS[btn.getAttribute('data-preset')];
+      vals.forEach((v,i) => {
+        eqSliders[i].value = v;
+        eqSliders[i].dispatchEvent(new Event('input'));
+      });
+    });
+  });
+
+  let soundAudioCtx = null;
+  let eqFilters = [];
+  let eqInputGain = null;
+  let currentSourceNode = null;
+  let currentSourceType = 'noise';
+  let soundPlaying = false;
+
+  function soundCtx(){
+    if(!soundAudioCtx){
+      soundAudioCtx = ensureSharedAudio();
+      eqInputGain = soundAudioCtx.createGain();
+      eqInputGain.gain.value = 0.5;
+      let prevNode = eqInputGain;
+      EQ_BANDS.forEach(b => {
+        const filt = soundAudioCtx.createBiquadFilter();
+        filt.type = 'peaking';
+        filt.frequency.value = b.freq;
+        filt.Q.value = 1.1;
+        filt.gain.value = 0;
+        prevNode.connect(filt);
+        prevNode = filt;
+        eqFilters.push(filt);
+      });
+      prevNode.connect(soundAudioCtx.destination);
+    }
+    return soundAudioCtx;
+  }
+
+  function stopSoundSource(){
+    if(currentSourceNode){
+      try{ currentSourceNode.stop(); } catch(e){}
+      try{ currentSourceNode.disconnect(); } catch(e){}
+      currentSourceNode = null;
+    }
+    soundPlaying = false;
+    eqPlayBtn.textContent = 'Play';
+  }
+
+  function makeNoiseBuffer(ctx){
+    const bufferSize = 2 * ctx.sampleRate;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<bufferSize;i++) data[i] = Math.random()*2-1;
+    return buffer;
+  }
+
+  function startSoundSource(){
+    const ctx = soundCtx();
+    stopSoundSource();
+    if(currentSourceType === 'noise'){
+      const src = ctx.createBufferSource();
+      src.buffer = makeNoiseBuffer(ctx);
+      src.loop = true;
+      src.connect(eqInputGain);
+      src.start();
+      currentSourceNode = src;
+    } else if(currentSourceType === 'tone'){
+      const osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(200, ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(4000, ctx.currentTime + 6);
+      osc.frequency.linearRampToValueAtTime(200, ctx.currentTime + 12);
+      osc.connect(eqInputGain);
+      osc.start();
+      currentSourceNode = osc;
+    } else if(currentSourceType === 'chord'){
+      const merger = ctx.createGain();
+      merger.gain.value = 1;
+      merger.connect(eqInputGain);
+      const freqs = [196, 246.94, 293.66, 392];
+      const oscs = freqs.map(f => {
+        const o = ctx.createOscillator();
+        o.type = 'triangle';
+        o.frequency.value = f;
+        const g = ctx.createGain();
+        g.gain.value = 0.22;
+        o.connect(g);
+        g.connect(merger);
+        o.start();
+        return o;
+      });
+      currentSourceNode = {
+        stop: () => oscs.forEach(o => { try{ o.stop(); }catch(e){} }),
+        disconnect: () => { merger.disconnect(); oscs.forEach(o=>{try{o.disconnect();}catch(e){}}); }
+      };
+    }
+    soundPlaying = true;
+    eqPlayBtn.textContent = 'Stop';
+  }
+
+  const eqPlayBtn = document.getElementById('eqPlayBtn');
+  const sourceLabel = document.getElementById('sourceLabel');
+  eqPlayBtn.addEventListener('click', () => {
+    if(soundPlaying) stopSoundSource(); else startSoundSource();
+  });
+  document.getElementById('sourceNoise').addEventListener('click', () => setSource('noise', 'pink noise'));
+  document.getElementById('sourceTone').addEventListener('click', () => setSource('tone', 'tone sweep'));
+  document.getElementById('sourceChord').addEventListener('click', () => setSource('chord', 'music-like chord'));
+  function setSource(type, label){
+    currentSourceType = type;
+    sourceLabel.textContent = 'Source: ' + label;
+    if(soundPlaying) startSoundSource();
+  }
+
+  // ================= SOUND PAGE: FACE-CONTROLLED VOLUME =================
+  const soundVideo = document.getElementById('soundVideo');
+  const soundOverlay = document.getElementById('soundOverlay');
+  const soundStageMsg = document.getElementById('soundStageMsg');
+  const soundStartBtn = document.getElementById('soundStartBtn');
+  const soundReadout = document.getElementById('soundReadout');
+  const macBarFill = document.getElementById('macBarFill');
+  const winBarFill = document.getElementById('winBarFill');
+  const winVolLabel = document.getElementById('winVolLabel');
+
+  let soundCtx2 = null;
+  let soundLastFace = null;
+  let soundMissCount = 0;
+  let soundDetecting = false;
+
+  soundStartBtn.addEventListener('click', startSoundCamera);
+
+  function startSoundCamera(){
+    soundReadout.textContent = 'Requesting camera…';
+    navigator.mediaDevices.getUserMedia({ video: { width:640, height:480, facingMode:'user' }, audio:false })
+      .then(stream => {
+        soundVideo.srcObject = stream;
+        soundStageMsg.style.display = 'none';
+        return soundVideo.play();
+      })
+      .then(() => {
+        soundOverlay.width = soundVideo.videoWidth || 640;
+        soundOverlay.height = soundVideo.videoHeight || 480;
+        soundCtx2 = soundOverlay.getContext('2d');
+        soundReadout.textContent = 'Loading face detector…';
+        return loadModels();
+      })
+      .then(() => {
+        modelsReady = true;
+        soundCtx(); // ensure the EQ audio graph (and eqInputGain) exists so volume can be linked right away
+        soundReadout.textContent = 'Looking for a face…';
+        requestAnimationFrame(soundDrawLoop);
+        soundDetectTick();
+      })
+      .catch(err => {
+        console.error(err);
+        soundReadout.textContent = 'Camera access was blocked or the detector failed to load.';
+      });
+  }
+
+  async function soundDetectTick(){
+    if(!modelsReady) return;
+    if(soundVideo.readyState >= 2 && !soundDetecting){
+      soundDetecting = true;
+      try{
+        const opts = new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 });
+        const result = await faceapi.detectSingleFace(soundVideo, opts);
+        if(result && result.box && result.box.width > 20){
+          soundLastFace = result.box;
+          soundMissCount = 0;
+        } else {
+          soundMissCount++;
+          if(soundMissCount > 6) soundLastFace = null;
+        }
+      } catch(e){ console.error('sound detection error', e); }
+      soundDetecting = false;
+    }
+    setTimeout(soundDetectTick, 60);
+  }
+
+  function updateOsIcons(level){
+    const pct = Math.round(level * 100);
+    macBarFill.style.width = pct + '%';
+    const fullWidth = 40;
+    winBarFill.setAttribute('width', Math.max(0, (pct/100) * fullWidth));
+    winVolLabel.textContent = 'WindowsOs · ' + pct + '%';
+  }
+
+  function soundDrawLoop(){
+    requestAnimationFrame(soundDrawLoop);
+    if(!soundCtx2) return;
+    soundCtx2.clearRect(0,0,soundOverlay.width, soundOverlay.height);
+
+    if(!soundLastFace){
+      soundReadout.textContent = 'No face detected — face the camera directly, in decent light.';
+      return;
+    }
+
+    const f = soundLastFace;
+    const vw = soundOverlay.width;
+    const distanceCm = (AVG_FACE_WIDTH_CM * ASSUMED_FOCAL_PX) / f.width;
+    const level = volumeForDistance(distanceCm);
+
+    if(eqInputGain && soundAudioCtx){
+      eqInputGain.gain.setTargetAtTime(level, soundAudioCtx.currentTime, 0.03);
+    }
+    updateOsIcons(level);
+    soundReadout.textContent = 'distance ~' + Math.round(distanceCm) + 'cm · volume ' + Math.round(level*100) + '%';
+
+    soundCtx2.save();
+    soundCtx2.strokeStyle = '#8B5CF6';
+    soundCtx2.lineWidth = 2;
+    soundCtx2.strokeRect(vw - f.x - f.width, f.y, f.width, f.height);
+    soundCtx2.restore();
+  }
+
+  // ================= HEARING TEST / AUDIOGRAM =================
+  const TEST_FREQS = [250, 500, 1000, 2000, 4000, 8000];
+  const STEP_SECONDS = 8;
+  const DB_MIN = -10, DB_MAX = 120;
+
+  const testIdle = document.getElementById('testIdle');
+  const testSwitchEar = document.getElementById('testSwitchEar');
+  const testRunning = document.getElementById('testRunning');
+  const testResults = document.getElementById('testResults');
+  const startTestBtn = document.getElementById('startTestBtn');
+  const continueLeftBtn = document.getElementById('continueLeftBtn');
+  const retakeTestBtn = document.getElementById('retakeTestBtn');
+  const testEarLabel = document.getElementById('testEarLabel');
+  const testFreqLabel = document.getElementById('testFreqLabel');
+  const testSubLabel = document.getElementById('testSubLabel');
+  const testProgressFill = document.getElementById('testProgressFill');
+  const hearBtn = document.getElementById('hearBtn');
+  const testStepCount = document.getElementById('testStepCount');
+  const resultsSummary = document.getElementById('resultsSummary');
+  const audiogramSvg = document.getElementById('audiogramSvg');
+  const modeBothBtn = document.getElementById('modeBothBtn');
+  const modeIndividualBtn = document.getElementById('modeIndividualBtn');
+  const testModeDesc = document.getElementById('testModeDesc');
+
+  const MODE_DESC = {
+    both: 'One pass through all six tones, played to both ears at once — good for a quick, general check. Results plot as a single line.',
+    individual: 'Tests each ear separately. Wear earbuds or headphones, and when prompted, make sure only the ear being tested can hear the tone (mute/remove the other side, or cover that ear). Results plot as two lines — right ear in red, left ear in blue.'
+  };
+
+  let testMode = 'both';
+  modeBothBtn.addEventListener('click', () => setTestMode('both'));
+  modeIndividualBtn.addEventListener('click', () => setTestMode('individual'));
+  function setTestMode(mode){
+    testMode = mode;
+    modeBothBtn.classList.toggle('active', mode === 'both');
+    modeIndividualBtn.classList.toggle('active', mode === 'individual');
+    testModeDesc.textContent = MODE_DESC[mode];
+  }
+
+  let testCtx = null, testOsc = null, testGain = null;
+  let testEar = 'both';
+  let testStepIndex = 0;
+  let testResultsData = { both: [], right: [], left: [] };
+  let testStepStart = 0;
+  let testRAF = null;
+  let testStepDone = false;
+
+  startTestBtn.addEventListener('click', beginTest);
+  continueLeftBtn.addEventListener('click', beginLeftEar);
+  retakeTestBtn.addEventListener('click', showTestOptions);
+  hearBtn.addEventListener('click', onHeardClick);
+
+  function showTestOptions(){
+    testResults.style.display = 'none';
+    testSwitchEar.style.display = 'none';
+    testRunning.style.display = 'none';
+    const wRunning = document.getElementById('wordRunning');
+    const wResults = document.getElementById('wordResultsWrap');
+    if(wRunning) wRunning.style.display = 'none';
+    if(wResults) wResults.style.display = 'none';
+    testIdle.style.display = 'block';
+  }
+
+  function beginTest(){
+    testEar = testMode === 'both' ? 'both' : 'right';
+    testStepIndex = 0;
+    testResultsData = { both: [], right: [], left: [] };
+    testIdle.style.display = 'none';
+    testSwitchEar.style.display = 'none';
+    testResults.style.display = 'none';
+    testRunning.style.display = 'block';
+    testCtx = ensureSharedAudio();
+    const wRunning = document.getElementById('wordRunning');
+    const wResults = document.getElementById('wordResultsWrap');
+    if(wRunning) wRunning.style.display = 'none';
+    if(wResults) wResults.style.display = 'none';
+    requestMicPermissionOnce(); // ask once, up front, so the later word phase never re-prompts
+    runStep();
+  }
+
+  function beginLeftEar(){
+    testEar = 'left';
+    testStepIndex = 0;
+    testSwitchEar.style.display = 'none';
+    testRunning.style.display = 'block';
+    runStep();
+  }
+
+  function runStep(){
+    if(testStepIndex >= TEST_FREQS.length){
+      if(testEar === 'right'){
+        testRunning.style.display = 'none';
+        testSwitchEar.style.display = 'block';
+      } else {
+        finishTest();
+      }
+      return;
+    }
+    testStepDone = false;
+    const freq = TEST_FREQS[testStepIndex];
+    testEarLabel.textContent = testEar === 'both' ? 'Both ears' : (testEar === 'right' ? 'Right ear' : 'Left ear');
+    testFreqLabel.textContent = freq + ' Hz';
+    testSubLabel.textContent = testEar === 'both'
+      ? 'Listen closely — it starts quiet and gets louder…'
+      : 'Make sure only your ' + testEar + ' ear can hear this — it starts quiet and gets louder…';
+    testStepCount.textContent = 'Step ' + (testStepIndex+1) + ' of ' + TEST_FREQS.length;
+    testProgressFill.style.width = '0%';
+
+    stopTestTone();
+    testOsc = testCtx.createOscillator();
+    testGain = testCtx.createGain();
+    testOsc.type = 'sine';
+    testOsc.frequency.value = freq;
+    testGain.gain.setValueAtTime(0.0001, testCtx.currentTime);
+    testGain.gain.linearRampToValueAtTime(0.5, testCtx.currentTime + STEP_SECONDS);
+    testOsc.connect(testGain);
+    testGain.connect(testCtx.destination);
+    testOsc.start();
+
+    testStepStart = performance.now();
+    tickStep();
+  }
+
+  function tickStep(){
+    if(testStepDone) return;
+    const elapsed = (performance.now() - testStepStart) / 1000;
+    const pct = Math.min(100, (elapsed / STEP_SECONDS) * 100);
+    testProgressFill.style.width = pct + '%';
+    if(elapsed >= STEP_SECONDS){
+      recordStep(1.0, false);
+      return;
+    }
+    testRAF = requestAnimationFrame(tickStep);
+  }
+
+  function onHeardClick(){
+    if(testStepDone) return;
+    const elapsed = (performance.now() - testStepStart) / 1000;
+    const frac = Math.max(0.02, Math.min(1, elapsed / STEP_SECONDS));
+    recordStep(frac, true);
+  }
+
+  function recordStep(frac, heard){
+    testStepDone = true;
+    if(testRAF) cancelAnimationFrame(testRAF);
+    stopTestTone();
+    const db = DB_MIN + frac * (DB_MAX - DB_MIN);
+    testResultsData[testEar].push({ freq: TEST_FREQS[testStepIndex], db: db, heard: heard });
+    testStepIndex++;
+    setTimeout(runStep, 350);
+  }
+
+  function stopTestTone(){
+    if(testOsc){
+      try{ testOsc.stop(); }catch(e){}
+      try{ testOsc.disconnect(); }catch(e){}
+      testOsc = null;
+    }
+    if(testGain){
+      try{ testGain.disconnect(); }catch(e){}
+      testGain = null;
+    }
+  }
+
+  function finishTest(){
+    testRunning.style.display = 'none';
+    if(testMode === 'both'){
+      const heard = testResultsData.both.filter(r => r.heard).length;
+      resultsSummary.textContent = 'Detected ' + heard + ' of ' + TEST_FREQS.length + ' tones. Lower on the chart means a tone had to get louder before you noticed it at that frequency.';
+    } else {
+      const rightHeard = testResultsData.right.filter(r => r.heard).length;
+      const leftHeard = testResultsData.left.filter(r => r.heard).length;
+      resultsSummary.textContent = 'Right ear: detected ' + rightHeard + ' of ' + TEST_FREQS.length + ' tones. Left ear: detected ' + leftHeard + ' of ' + TEST_FREQS.length + ' tones. Lower on the chart means a tone had to get louder before you noticed it at that frequency.';
+    }
+    drawAudiogram(testMode, testResultsData);
+    // Tone portion is done — continue straight into the spoken-word portion.
+    // Full results (tones + words) only appear once the word phase finishes too.
+    beginWordTest();
+  }
+
+  function revealCombinedResults(){
+    testResults.style.display = 'block';
+  }
+
+  function drawAudiogram(mode, results){
+    const W = 900, H = 480;
+    const padL = 70, padR = 150, padT = 90, padB = 30;
+    const chartW = W - padL - padR, chartH = H - padT - padB;
+    const n = TEST_FREQS.length;
+    const xFor = i => padL + (chartW * (i + 0.5) / n);
+    const yFor = db => padT + ((db - DB_MIN) / (DB_MAX - DB_MIN)) * chartH;
+    const RED = '#D8493D', BLUE = '#2E9BE0', BOTH_COLOR = '#6C3FC5';
+
+    const bands = [
+      { label:'Normal\nHearing', from:-10, to:20,  shade:'#FFFFFF' },
+      { label:'Mild',            from:20,  to:40,  shade:'#F6F6F6' },
+      { label:'Moderate',        from:40,  to:55,  shade:'#ECECEC' },
+      { label:'Moderately\nSevere', from:55, to:70, shade:'#E2E2E2' },
+      { label:'Severe',          from:70,  to:90,  shade:'#D7D7D7' },
+      { label:'Profound',        from:90,  to:120, shade:'#CBCBCB' }
+    ];
+
+    let svg = '';
+
+    // title + legend
+    svg += '<text x="'+padL+'" y="34" font-size="26" font-weight="700" fill="'+BLUE+'" font-family="Space Grotesk, sans-serif">Pure Tone Audiogram</text>';
+    if(mode === 'both'){
+      svg += '<circle cx="'+(W-140)+'" cy="34" r="6" fill="none" stroke="'+BOTH_COLOR+'" stroke-width="2.5"/>';
+      svg += '<text x="'+(W-125)+'" y="39" font-size="13" font-weight="600" fill="'+BOTH_COLOR+'" font-family="IBM Plex Sans, sans-serif">Both Ears</text>';
+    } else {
+      svg += '<circle cx="'+(W-140)+'" cy="26" r="6" fill="none" stroke="'+RED+'" stroke-width="2.5"/>';
+      svg += '<text x="'+(W-125)+'" y="31" font-size="13" font-weight="600" fill="'+RED+'" font-family="IBM Plex Sans, sans-serif">Right Ear</text>';
+      svg += '<g transform="translate('+(W-140)+',48)"><line x1="-5" y1="-5" x2="5" y2="5" stroke="'+BLUE+'" stroke-width="2.5"/><line x1="-5" y1="5" x2="5" y2="-5" stroke="'+BLUE+'" stroke-width="2.5"/></g>';
+      svg += '<text x="'+(W-125)+'" y="53" font-size="13" font-weight="600" fill="'+BLUE+'" font-family="IBM Plex Sans, sans-serif">Left Ear</text>';
+    }
+
+    // frequency axis label + values
+    svg += '<text x="'+padL+'" y="64" font-size="13" font-style="italic" font-weight="600" fill="'+'#241B35'+'" font-family="IBM Plex Sans, sans-serif">Frequency (Hz)</text>';
+    TEST_FREQS.forEach((f,i) => {
+      svg += '<text x="'+xFor(i)+'" y="80" font-size="13" font-weight="600" fill="#241B35" text-anchor="middle" font-family="IBM Plex Sans, sans-serif">'+f+'</text>';
+    });
+
+    // volume axis label (rotated)
+    svg += '<text x="18" y="'+(padT+chartH/2)+'" font-size="13" font-style="italic" font-weight="600" fill="#241B35" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" transform="rotate(-90 18 '+(padT+chartH/2)+')">Volume (dB)</text>';
+
+    // severity band shading
+    bands.forEach(b => {
+      svg += '<rect x="'+padL+'" y="'+yFor(b.to)+'" width="'+chartW+'" height="'+(yFor(b.from)-yFor(b.to))+'" fill="'+b.shade+'"/>';
+    });
+
+    // horizontal gridlines + dB labels
+    for(let db = DB_MIN; db <= DB_MAX; db += 10){
+      const y = yFor(db);
+      svg += '<line x1="'+padL+'" y1="'+y+'" x2="'+(padL+chartW)+'" y2="'+y+'" stroke="#B8B8B8" stroke-width="1"/>';
+      svg += '<text x="'+(padL-12)+'" y="'+(y+4)+'" font-size="12" fill="#241B35" text-anchor="end" font-family="IBM Plex Mono, monospace">'+db+'</text>';
+    }
+    // vertical gridlines
+    for(let i=0;i<=n;i++){
+      const x = padL + (chartW*i/n);
+      svg += '<line x1="'+x+'" y1="'+padT+'" x2="'+x+'" y2="'+(padT+chartH)+'" stroke="#B8B8B8" stroke-width="1"/>';
+    }
+    // chart border
+    svg += '<rect x="'+padL+'" y="'+padT+'" width="'+chartW+'" height="'+chartH+'" fill="none" stroke="#8A8A8A" stroke-width="1.5"/>';
+
+    // right-side severity tick marks + labels
+    bands.forEach(b => {
+      const yMid = (yFor(b.from)+yFor(b.to))/2;
+      const lines = b.label.split('\n');
+      lines.forEach((ln,li) => {
+        svg += '<text x="'+(padL+chartW+18)+'" y="'+(yMid + li*15 - (lines.length-1)*7)+'" font-size="13" font-weight="600" fill="#241B35" font-family="IBM Plex Sans, sans-serif">'+ln+'</text>';
+      });
+    });
+    for(let i=1;i<bands.length;i++){
+      const yTick = yFor(bands[i].from);
+      svg += '<line x1="'+(padL+chartW)+'" y1="'+yTick+'" x2="'+(padL+chartW+8)+'" y2="'+yTick+'" stroke="#8A8A8A" stroke-width="1.5"/>';
+    }
+
+    function plotEar(data, color, symbol){
+      if(!data || data.length === 0) return;
+      let points = [];
+      data.forEach((d,i) => {
+        const x = xFor(i);
+        const y = yFor(d.db);
+        points.push(x+','+y);
+      });
+      svg += '<polyline points="'+points.join(' ')+'" fill="none" stroke="'+color+'" stroke-width="2"/>';
+      data.forEach((d,i) => {
+        const x = xFor(i);
+        const y = yFor(d.db);
+        if(symbol === 'circle'){
+          svg += '<circle cx="'+x+'" cy="'+y+'" r="7" fill="#fff" stroke="'+color+'" stroke-width="2.5"/>';
+        } else {
+          svg += '<g transform="translate('+x+','+y+')"><line x1="-6" y1="-6" x2="6" y2="6" stroke="'+color+'" stroke-width="2.5"/><line x1="-6" y1="6" x2="6" y2="-6" stroke="'+color+'" stroke-width="2.5"/></g>';
+        }
+        if(!d.heard){
+          svg += '<line x1="'+x+'" y1="'+(y+9)+'" x2="'+x+'" y2="'+(y+20)+'" stroke="'+color+'" stroke-width="2"/>';
+          svg += '<polygon points="'+(x-4)+','+(y+16)+' '+(x+4)+','+(y+16)+' '+x+','+(y+22)+'" fill="'+color+'"/>';
+        }
+      });
+    }
+
+    if(mode === 'both'){
+      plotEar(results.both, BOTH_COLOR, 'circle');
+    } else {
+      plotEar(results.right, RED, 'circle');
+      plotEar(results.left, BLUE, 'x');
+    }
+
+    audiogramSvg.innerHTML = svg;
+  }
+
+  // ================= WORD REPETITION CHECK =================
+  // This is now the second half of the same test — it starts automatically once
+  // the tone portion finishes. The word itself is never shown on screen; it's
+  // spoken aloud (text-to-speech) at one of several volume levels, and the
+  // person just says back what they heard.
+  const WORD_LIST = ['cat','ball','shoe','tree','cup','fish','book','star','moon','frog'];
+  const WORD_VOLUME_LEVELS = [
+    { label: 'Loud',  volume: 1.0  },
+    { label: 'Medium', volume: 0.55 },
+    { label: 'Soft',   volume: 0.22 }
+  ];
+  const wordRunning = document.getElementById('wordRunning');
+  const wordResultsWrap = document.getElementById('wordResultsWrap');
+  const wordStepCount = document.getElementById('wordStepCount');
+  const wordLevelLabel = document.getElementById('wordLevelLabel');
+  const wordStatus = document.getElementById('wordStatus');
+  const wordProgressFill = document.getElementById('wordProgressFill');
+  const wordSkipBtn = document.getElementById('wordSkipBtn');
+  const wordAccuracySummary = document.getElementById('wordAccuracySummary');
+  const wordTableBody = document.getElementById('wordTableBody');
+
+  let wordIndex = 0;
+  let wordRecords = [];
+  let speechSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  let ttsSupported = 'speechSynthesis' in window;
+
+  // ---- one-time microphone permission, held open for the whole test ----
+  // getUserMedia is only ever called once (here). We keep the resulting
+  // stream open for the duration of the word test instead of stopping it
+  // right away — on most browsers that's what keeps the mic "already on"
+  // so each new SpeechRecognition() reuses the same grant silently instead
+  // of prompting again per word. The stream is released once the whole
+  // word test is done (finishWordTest) or the test is restarted.
+  let micPermissionState = 'unrequested'; // 'unrequested' | 'granted' | 'denied'
+  let micPermissionPromise = null;
+  let micStream = null;
+  function requestMicPermissionOnce(){
+    if(!speechSupported) return Promise.resolve(false);
+    if(micPermissionPromise) return micPermissionPromise;
+    micPermissionPromise = navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        micStream = stream; // keep tracks open — released when the word test ends
+        micPermissionState = 'granted';
+        return true;
+      })
+      .catch(() => {
+        micPermissionState = 'denied';
+        return false;
+      });
+    return micPermissionPromise;
+  }
+  function releaseMicStream(){
+    if(micStream){
+      micStream.getTracks().forEach(t => t.stop());
+      micStream = null;
+    }
+  }
+
+  // A fresh recognition instance per word — reusing one object across words
+  // risks a race where start() fires before the previous instance has fully
+  // stopped, which can cut a listen short. This still only asks for mic
+  // permission once overall, because that grant is tied to the persistent
+  // micStream above, not to how many SpeechRecognition objects get created.
+  let wordRecognition = null;
+  function newRecognition(){
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const rec = new SR();
+    rec.lang = 'en-US';
+    rec.maxAlternatives = 3;
+    rec.interimResults = false;
+    rec.continuous = false;
+    return rec;
+  }
+
+  wordSkipBtn.addEventListener('click', () => recordWord('(skipped)', false));
+
+  function beginWordTest(){
+    wordIndex = 0;
+    wordRecords = [];
+    wordResultsWrap.style.display = 'none';
+    testRunning.style.display = 'none';
+    wordRunning.style.display = 'block';
+    runWordStep();
+  }
+
+  function currentLevel(){
+    return WORD_VOLUME_LEVELS[wordIndex % WORD_VOLUME_LEVELS.length];
+  }
+
+  function runWordStep(){
+    if(wordIndex >= WORD_LIST.length){
+      finishWordTest();
+      return;
+    }
+    const word = WORD_LIST[wordIndex];
+    const level = currentLevel();
+    wordStepCount.textContent = 'Word ' + (wordIndex+1) + ' of ' + WORD_LIST.length;
+    wordLevelLabel.textContent = '🔊';
+    wordProgressFill.style.width = '0%';
+
+    if(!ttsSupported){
+      // No speech synthesis available at all — fall back to showing the word,
+      // since there's no other way to convey it without one.
+      wordLevelLabel.textContent = word;
+      wordStatus.textContent = 'Text-to-speech isn\'t supported in this browser — say the word above out loud.';
+      afterWordCue(word);
+      return;
+    }
+
+    wordStatus.textContent = 'Playing a word at ' + level.label.toLowerCase() + ' volume — listen closely…';
+    wordProgressFill.style.width = '100%';
+    speakWord(word, level.volume).then(() => {
+      afterWordCue(word);
+    });
+  }
+
+  function speakWord(word, volume){
+    return new Promise((resolve) => {
+      try{
+        window.speechSynthesis.cancel(); // clear any queued/stuck utterances
+        const utter = new SpeechSynthesisUtterance(word);
+        utter.lang = 'en-US';
+        utter.rate = 0.9;
+        utter.volume = Math.max(0, Math.min(1, volume));
+        utter.onend = resolve;
+        utter.onerror = resolve;
+        window.speechSynthesis.speak(utter);
+      }catch(e){
+        resolve();
+      }
+    });
+  }
+
+  function afterWordCue(word){
+    wordProgressFill.style.width = '0%';
+    if(!speechSupported){
+      // No automatic scoring possible in this browser — record it as
+      // unscored rather than asking the person to self-report.
+      wordStatus.textContent = 'Speech recognition isn\'t supported in this browser, so this word can\'t be auto-scored — moving on.';
+      recordWord('(speech recognition not supported)', false);
+      return;
+    }
+    wordStatus.textContent = 'Now say the word you just heard…';
+    listenForWord(word);
+  }
+
+  function listenForWord(word){
+    function start(){
+      try{
+        const rec = newRecognition();
+        wordRecognition = rec;
+        let handled = false;
+
+        rec.onresult = (event) => {
+          if(handled) return;
+          handled = true;
+          const transcript = event.results[0][0].transcript.trim().toLowerCase();
+          const target = word.toLowerCase();
+          const correct = transcript === target || transcript.indexOf(target) !== -1;
+          recordWord(transcript, correct);
+        };
+        rec.onerror = (event) => {
+          if(handled) return;
+          handled = true;
+          if(event && event.error === 'not-allowed'){
+            micPermissionState = 'denied';
+            wordStatus.textContent = 'Microphone access was denied — this word is recorded as not heard.';
+          } else {
+            wordStatus.textContent = 'Microphone unavailable — this word is recorded as not heard.';
+          }
+          recordWord('(mic error)', false);
+        };
+        rec.onend = () => {
+          if(!handled){
+            handled = true;
+            recordWord('(no speech detected)', false);
+          }
+        };
+        rec.start();
+      }catch(e){
+        wordStatus.textContent = 'Speech recognition failed to start — this word is recorded as not heard.';
+        recordWord('(recognition failed)', false);
+      }
+    }
+
+    if(micPermissionState === 'granted'){
+      start();
+    } else if(micPermissionState === 'denied'){
+      wordStatus.textContent = 'Microphone access was denied — this word is recorded as not heard.';
+      recordWord('(mic denied)', false);
+    } else {
+      // Permission still resolving (e.g. very first word) — wait for the
+      // single up-front prompt to settle, then proceed without asking again.
+      requestMicPermissionOnce().then(granted => {
+        if(granted) start();
+        else {
+          wordStatus.textContent = 'Microphone access was denied — this word is recorded as not heard.';
+          recordWord('(mic denied)', false);
+        }
+      });
+    }
+  }
+
+  function recordWord(heard, correct){
+    if(wordRecognition){
+      try{ wordRecognition.abort(); }catch(e){}
+    }
+    wordRecords.push({ word: WORD_LIST[wordIndex], heard: heard, correct: correct, level: currentLevel().label });
+    wordIndex++;
+    setTimeout(runWordStep, 350);
+  }
+
+  function finishWordTest(){
+    wordRunning.style.display = 'none';
+    wordResultsWrap.style.display = 'block';
+    releaseMicStream();
+    const correctCount = wordRecords.filter(r => r.correct).length;
+    const pct = Math.round((correctCount / WORD_LIST.length) * 100);
+    wordAccuracySummary.textContent = 'Accuracy: ' + correctCount + ' of ' + WORD_LIST.length + ' words (' + pct + '%)';
+    wordTableBody.innerHTML = wordRecords.map(r =>
+      '<tr><td>' + r.word + '</td><td>' + r.level + '</td><td>' + r.heard + '</td><td class="' + (r.correct ? 'result-correct' : 'result-wrong') + '">' + (r.correct ? 'Correct' : 'Incorrect') + '</td></tr>'
+    ).join('');
+    // Now that both the tone test and the word test are complete, reveal
+    // the full results together.
+    revealCombinedResults();
+  }
+
+})();
+</script>
+</body>
+</html>
