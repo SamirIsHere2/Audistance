@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AU Distance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F1F28;
+    --panel:#16303C;
+    --panel-2:#1C3945;
+    --line:#2C4B57;
+    --text:#EAF2F0;
+    --muted:#7FA0A8;
+    --red:#F2543D;
+    --amber:#F2B84B;
+    --green:#43D9A3;
+    --spotify:#1DB954;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(circle at 50% -10%, #16323F 0%, #0F1F28 55%, #0A171F 100%);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    padding:32px 20px 60px;
+  }
+  .wrap{max-width:920px;margin:0 auto;}
+  header{margin-bottom:22px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.18em;
+    color:var(--muted);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:42px;
+    margin:0 0 8px;
+    letter-spacing:-0.01em;
+  }
+  h1 span{color:var(--green);}
+  .sub{
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.55;
+    max-width:560px;
+  }
+
+  /* --- tabs --- */
+  .tabs{
+    display:flex;
+    gap:6px;
+    margin-top:20px;
+    border-bottom:1px solid var(--line);
+  }
+  .tab-btn{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    background:none;
+    border:none;
+    color:var(--muted);
+    padding:10px 4px;
+    margin-right:18px;
+    cursor:pointer;
+    position:relative;
+    top:1px;
+  }
+  .tab-btn.active{
+    color:var(--text);
+    border-bottom:2px solid var(--green);
+  }
+
+  .view{display:none;margin-top:26px;}
+  .view.active{display:block;}
+
+  /* --- guide page --- */
+  .guide-grid{display:flex;flex-direction:column;gap:14px;}
+  .guide-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:20px 22px;
+  }
+  .guide-card h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:17px;
+    margin:0 0 6px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .step-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--green);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:2px 7px;
+  }
+  .guide-card p{
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.6;
+    margin:0 0 8px;
+  }
+  .guide-card p:last-child{margin-bottom:0;}
+  .guide-card code{
+    font-family:'IBM Plex Mono', monospace;
+    background:#0F262F;
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:1px 6px;
+    font-size:12.5px;
+    color:var(--text);
+  }
+  .guide-card ul{margin:6px 0 0;padding-left:18px;color:var(--muted);font-size:14px;line-height:1.6;}
+  .guide-cta{
+    margin-top:6px;
+    display:inline-flex;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:600;
+    background:var(--green);
+    color:#0A1F17;
+    border:none;
+    padding:11px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:14px;
+  }
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+  .badge{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--muted);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:4px 10px;
+  }
+
+  /* --- monitor page (existing product) --- */
+  .grid{
+    display:grid;
+    grid-template-columns:1.15fr 1fr;
+    gap:20px;
+  }
+  @media (max-width:760px){ .grid{grid-template-columns:1fr;} }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px;
+  }
+  .stage{
+    position:relative;
+    aspect-ratio:4/3;
+    background:#08151C;
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  video{
+    width:100%;height:100%;
+    object-fit:cover;
+    transform:scaleX(-1);
+    display:block;
+  }
+  canvas.overlay{
+    position:absolute;top:0;left:0;
+    width:100%;height:100%;
+    pointer-events:none;
+  }
+  .stage-msg{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:24px;
+    font-size:14px; color:var(--muted);
+    background:#08151C;
+    z-index:2;
+  }
+  .stage-msg button{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight:600;
+    background:var(--green);
+    color:#0A1F17;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:14px;
+    margin-top:14px;
+  }
+
+  .status-line{
+    margin-top:14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:17px;
+  }
+  .status-dot{
+    width:11px;height:11px;border-radius:50%;
+    background:var(--red);
+    transition:background 0.25s ease;
+  }
+  .readout{
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--muted);
+    font-size:13px;
+    margin-top:2px;
+  }
+
+  .metrics{display:flex;flex-direction:column;gap:10px;}
+  .metric{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .metric-left{display:flex;align-items:center;gap:10px;}
+  .metric-dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--red);
+    flex-shrink:0;
+    transition:background 0.25s ease;
+  }
+  .metric-name{font-size:14px;font-weight:500;}
+  .metric-hint{font-size:12px;color:var(--muted);margin-top:2px;}
+  .metric-value{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:14px;
+    color:var(--text);
+    text-align:right;
+    min-width:70px;
+  }
+
+  .settings{
+    margin-top:16px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+  }
+  .settings-title{
+    font-size:12px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-family:'IBM Plex Mono', monospace;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .settings-title .dot-sm{width:6px;height:6px;border-radius:50%;background:var(--spotify);}
+  .range-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .range-row input[type=number], .range-row input[type=text]{
+    width:64px;
+    background:#0F262F;
+    border:1px solid var(--line);
+    color:var(--text);
+    border-radius:6px;
+    padding:6px 8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+  }
+  .range-row input[type=text].wide{width:170px;}
+  .range-row span{color:var(--muted);font-size:13px;}
+  .unit-toggle{
+    display:flex;
+    gap:6px;
+    margin-top:10px;
+  }
+  .unit-toggle button{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--muted);
+    padding:5px 10px;
+    border-radius:6px;
+    cursor:pointer;
+  }
+  .unit-toggle button.active{
+    border-color:var(--green);
+    color:var(--green);
+  }
+
+  .adv-toggle{
+    margin-top:10px;
+    font-size:12px;
+    color:var(--muted);
+    background:none;
+    border:none;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+    font-family:'IBM Plex Sans', sans-serif;
+  }
+  .adv-row{display:none;margin-top:10px;align-items:center;gap:8px;}
+  .adv-row.show{display:flex;flex-wrap:wrap;}
+  .adv-row input[type=range]{width:120px;}
+
+  footer{
+    margin-top:26px;
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.6;
+    border-top:1px solid var(--line);
+    padding-top:16px;
+  }
+
+  .switch{position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;}
+  .switch input{opacity:0;width:0;height:0;position:absolute;}
+  .switch-track{
+    position:absolute;inset:0;background:#0F262F;border:1px solid var(--line);
+    border-radius:22px;transition:background 0.2s ease;cursor:pointer;
+  }
+  .switch-thumb{
+    position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;
+    background:var(--muted);transition:transform 0.2s ease, background 0.2s ease;
+  }
+  .switch input:checked + .switch-track{border-color:var(--green);}
+  .switch input:checked + .switch-track .switch-thumb{transform:translateX(18px);background:var(--green);}
+
+  .modal-backdrop{
+    display:none;
+    position:fixed;inset:0;background:rgba(6,15,20,0.72);
+    align-items:center;justify-content:center;z-index:50;padding:20px;
+  }
+  .modal-backdrop.show{display:flex;}
+  .modal-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:22px;max-width:420px;
+  }
+  .modal-title{
+    font-family:'Space Grotesk', sans-serif;font-weight:600;font-size:18px;margin-bottom:10px;
+  }
+  .modal-body{font-size:14px;color:var(--muted);line-height:1.55;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;}
+  .modal-btn{
+    font-family:'IBM Plex Sans', sans-serif;font-weight:600;font-size:14px;
+    padding:9px 16px;border-radius:8px;cursor:pointer;border:1px solid var(--line);
+  }
+  .modal-btn.ghost{background:transparent;color:var(--muted);}
+  .modal-btn.solid{background:var(--green);color:#0A1F17;border:none;}
+  .modal-btn.spotify-solid{background:var(--spotify);color:#04240F;border:none;}
+
+  .sp-status{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5;}
+  .sp-status.err{color:var(--red);}
+  .sp-status.ok{color:var(--green);}
+  .connect-btn{
+    font-family:'IBM Plex Sans', sans-serif;font-weight:600;font-size:13px;
+    background:var(--spotify);color:#04240F;border:none;padding:9px 16px;
+    border-radius:8px;cursor:pointer;
+  }
+  .connect-btn.disconnect{background:transparent;border:1px solid var(--line);color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">AU DISTANCE — CAMERA-GUIDED HEARING RANGE</div>
+    <h1>Find your <span>hearing sweet spot</span>.</h1>
+    <p class="sub">Center your face in the frame. AU Distance estimates how far you are from the camera and flags whether you're sitting in a generally recommended range for clear face-to-face hearing and lip visibility — useful for conversations, video calls, or hearing device fitting checks.</p>
+    <nav class="tabs">
+      <button class="tab-btn active" data-view="guide" id="tabGuide">Guide</button>
+      <button class="tab-btn" data-view="monitor" id="tabMonitor">Monitor</button>
+    </nav>
+  </header>
+
+  <!-- ============ GUIDE PAGE ============ -->
+  <section class="view active" id="view-guide">
+    <div class="guide-grid">
+      <div class="guide-card">
+        <h2><span class="step-num">01</span> What this does</h2>
+        <p>AU Distance watches your webcam feed locally in this browser tab, finds your face, and estimates how far you are from the screen. It flags whether you're inside a recommended range (default 90–150 cm / ≈3–5 ft) for comfortable face-to-face hearing and lip visibility.</p>
+        <p>Nothing is recorded or uploaded. Video frames are processed on your device and are never sent anywhere.</p>
+      </div>
+
+      <div class="guide-card">
+        <h2><span class="step-num">02</span> Turn on the camera</h2>
+        <p>Go to the <strong>Monitor</strong> tab and click <strong>Turn on camera</strong>. Your browser will ask you to grant camera permission — that prompt has to come from your browser directly, so click "Allow" when it appears. Nothing turns your camera on automatically or without that prompt.</p>
+        <p>Once it's on, center your face in frame. The four indicators (distance, horizontal centering, vertical centering, lighting) turn green when you're in a good spot.</p>
+      </div>
+
+      <div class="guide-card">
+        <h2><span class="step-num">03</span> Distance-based volume</h2>
+        <p>Turn on <strong>Volume by distance</strong> in the Monitor tab and this happens automatically as you move:</p>
+        <ul>
+          <li>Move <strong>closer</strong> to the camera → volume turns <strong>down</strong>.</li>
+          <li>Move <strong>farther away</strong> → volume turns <strong>up</strong>.</li>
+        </ul>
+        <p>This can control two things independently: a built-in test tone played on this page (no setup needed), and/or your Spotify playback volume (needs a one-time connection, see below). Either way, this tool can only ever change volume it plays itself or that it explicitly controls through Spotify's API — it can never touch your device's system volume or any other app.</p>
+      </div>
+
+      <div class="guide-card">
+        <h2><span class="step-num">04</span> Connect Spotify (optional)</h2>
+        <p>To let distance control your actual Spotify playback volume, you'll need your own free Spotify developer app — this keeps your login credentials entirely between you and Spotify, this page never sees your password.</p>
+        <ul>
+          <li>Go to <code>developer.spotify.com/dashboard</code> and log in with your Spotify account.</li>
+          <li>Click <strong>Create app</strong>. Give it any name and description.</li>
+          <li>In <strong>Redirect URIs</strong>, add the exact URL this page is hosted at (shown on the Monitor tab once you're there).</li>
+          <li>Save, then copy the app's <strong>Client ID</strong> into the Monitor tab and click <strong>Connect Spotify</strong>.</li>
+        </ul>
+        <p>You'll be sent to Spotify to log in and approve access, then returned here. You'll also need <strong>Spotify Premium</strong> and a song already playing on an active device — Spotify's API can only adjust volume on a session that's currently playing, it can't start playback for you.</p>
+        <div class="badge-row">
+          <span class="badge">Requires Spotify Premium</span>
+          <span class="badge">Requires an active playing device</span>
+          <span class="badge">Volume control only</span>
+        </div>
+      </div>
+
+      <div class="guide-card">
+        <h2><span class="step-num">05</span> Good to know</h2>
+        <p>The distance number is an approximation — it assumes an average adult face width and a typical webcam field of view, so treat it as a general guide, not a clinical measurement.</p>
+        <p>Because this page doesn't use browser storage, your Spotify connection and Client ID reset if you reload the page or navigate away — you'll reconnect with one click, but it won't stay signed in long-term.</p>
+      </div>
+
+      <button class="guide-cta" id="goToMonitor">Go to Monitor →</button>
+    </div>
+  </section>
+
+  <!-- ============ MONITOR PAGE ============ -->
+  <section class="view" id="view-monitor">
+    <div class="grid">
+      <div class="panel">
+        <div class="stage" id="stage">
+          <video id="video" autoplay playsinline muted></video>
+          <canvas class="overlay" id="overlay"></canvas>
+          <div class="stage-msg" id="stageMsg">
+            <div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;margin-bottom:6px;">Camera access needed</div>
+              <div>AU Distance needs your camera to estimate distance. Nothing is recorded or sent anywhere — it all stays in this browser tab. Your browser will show its own permission prompt — click Allow there.</div>
+              <button id="startBtn">Turn on camera</button>
+            </div>
+          </div>
+        </div>
+        <div class="status-line">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Waiting for camera…</span>
+        </div>
+        <div class="readout" id="readoutText">—</div>
+      </div>
+
+      <div class="panel">
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-left">
+              <div class="metric-dot" id="dot-distance"></div>
+              <div>
+                <div class="metric-name">Distance</div>
+                <div class="metric-hint" id="hint-distance">Move closer or farther</div>
+              </div>
+            </div>
+            <div class="metric-value" id="val-distance">— cm</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-left">
+              <div class="metric-dot" id="dot-h"></div>
+              <div>
+                <div class="metric-name">Horizontal centering</div>
+                <div class="metric-hint" id="hint-h">Shift left or right</div>
+              </div>
+            </div>
+            <div class="metric-value" id="val-h">—</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-left">
+              <div class="metric-dot" id="dot-v"></div>
+              <div>
+                <div class="metric-name">Vertical centering</div>
+                <div class="metric-hint" id="hint-v">Adjust camera height</div>
+              </div>
+            </div>
+            <div class="metric-value" id="val-v">—</div>
+          </div>
+
+          <div class="metric">
+            <div class="metric-left">
+              <div class="metric-dot" id="dot-light"></div>
+              <div>
+                <div class="metric-name">Lighting</div>
+                <div class="metric-hint" id="hint-light">Face needs even light</div>
+              </div>
+            </div>
+            <div class="metric-value" id="val-light">—</div>
+          </div>
+        </div>
+
+        <div class="settings">
+          <div class="settings-title">General recommended range</div>
+          <div class="range-row">
+            <span>Min</span>
+            <input type="number" id="minRange" value="90">
+            <span>Max</span>
+            <input type="number" id="maxRange" value="150">
+            <span id="unitLabel">cm</span>
+          </div>
+          <div class="unit-toggle">
+            <button id="cmBtn" class="active">cm</button>
+            <button id="ftBtn">ft</button>
+          </div>
+
+          <button class="adv-toggle" id="advToggle">Detection not working well? Tune sensitivity</button>
+          <div class="adv-row" id="advRow">
+            <span>Sensitivity</span>
+            <input type="range" id="sensSlider" min="0.1" max="0.7" step="0.05" value="0.3">
+            <span id="sensVal">0.30</span>
+          </div>
+        </div>
+
+        <div class="settings">
+          <div class="settings-title">Volume by distance</div>
+          <div class="range-row" style="margin-bottom:6px;">
+            <label class="switch">
+              <input type="checkbox" id="volToggle">
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+            <span id="volToggleLabel" style="color:var(--muted);font-size:13px;">Off</span>
+          </div>
+          <div class="metric-hint" style="margin-bottom:10px;">Closer to the camera → quieter. Farther away → louder. Applies to whichever of the outputs below are turned on.</div>
+          <div class="range-row" id="testToneRow" style="display:none;">
+            <button class="adv-toggle" id="toneBtn" style="text-decoration:none;border:1px solid var(--line);padding:6px 12px;border-radius:6px;">Play test tone</button>
+            <span class="metric-value" id="volReadout" style="min-width:auto;">vol —</span>
+          </div>
+          <div class="metric-hint" style="margin-top:8px;">
+            The test tone only controls audio played on this page. Browsers don't allow a website to change your computer's overall system volume.
+          </div>
+        </div>
+
+        <div class="settings">
+          <div class="settings-title"><span class="dot-sm"></span> Spotify playback volume</div>
+          <div id="spotifyPreConnect">
+            <div class="metric-hint" style="margin-bottom:10px;">Connect your own Spotify app to let distance control the volume of whatever is playing on your active Spotify device. See the Guide tab for setup steps.</div>
+            <div class="range-row" style="margin-bottom:8px;">
+              <input type="text" id="spotifyClientId" class="wide" placeholder="Spotify Client ID">
+            </div>
+            <div class="range-row" style="margin-bottom:8px;">
+              <span>Redirect URI to register:</span>
+            </div>
+            <div class="range-row">
+              <input type="text" id="spotifyRedirectUri" class="wide" readonly style="width:100%;">
+            </div>
+            <button class="connect-btn" id="spotifyConnectBtn" style="margin-top:10px;">Connect Spotify</button>
+          </div>
+          <div id="spotifyPostConnect" style="display:none;">
+            <div class="range-row" style="margin-bottom:8px;justify-content:space-between;">
+              <span style="color:var(--text);font-size:13px;font-weight:500;">Connected to Spotify</span>
+              <button class="connect-btn disconnect" id="spotifyDisconnectBtn">Disconnect</button>
+            </div>
+            <div class="range-row">
+              <label class="switch">
+                <input type="checkbox" id="spotifyVolToggle">
+                <span class="switch-track"><span class="switch-thumb"></span></span>
+              </label>
+              <span id="spotifyVolToggleLabel" style="color:var(--muted);font-size:13px;">Off</span>
+              <span class="metric-value" id="spotifyVolReadout" style="min-width:auto;">vol —</span>
+            </div>
+          </div>
+          <div class="sp-status" id="spotifyStatus"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="volModal">
+      <div class="modal-card">
+        <div class="modal-title">Let AU Distance adjust in-page volume?</div>
+        <div class="modal-body">
+          Turning this on lets AU Distance raise or lower the volume of audio played <em>on this page</em> (like the test tone above) based on how far you are from the camera — quieter as you move closer, louder as you move farther away.
+          <br><br>
+          This can't touch your computer's system volume or any other app or tab — only sound played here.
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn ghost" id="volDeny">Not now</button>
+          <button class="modal-btn solid" id="volAllow">Allow</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="spotifyVolModal">
+      <div class="modal-card">
+        <div class="modal-title">Let AU Distance adjust Spotify volume?</div>
+        <div class="modal-body">
+          Turning this on lets AU Distance raise or lower the playback volume on your <em>active Spotify device</em> based on how far you are from the camera — quieter as you move closer, louder as you move farther away, using Spotify's official volume control API.
+          <br><br>
+          It can only change volume on the device that's currently playing — it can't start, stop, skip, or change what's playing, and it can't touch your system volume.
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn ghost" id="spotifyVolDeny">Not now</button>
+          <button class="modal-btn spotify-solid" id="spotifyVolAllow">Allow</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Distance is an approximation. It assumes an average adult face width (~14 cm) and a typical webcam field of view, so treat the number as a general guide rather than a clinical measurement. The default 90–150 cm (≈3–5 ft) range reflects common guidance for comfortable face-to-face hearing and lip-reading distance — adjust it above for your own setup. This tool doesn't replace advice from an audiologist or hearing care professional. Spotify integration uses Spotify's official Web API under your own developer credentials and is not affiliated with or endorsed by Spotify.
+    </footer>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script>
+(function(){
+  // ---------------- tabs ----------------
+  const tabGuide = document.getElementById('tabGuide');
+  const tabMonitor = document.getElementById('tabMonitor');
+  const viewGuide = document.getElementById('view-guide');
+  const viewMonitor = document.getElementById('view-monitor');
+  const goToMonitor = document.getElementById('goToMonitor');
+
+  function showView(name){
+    const toMonitor = name === 'monitor';
+    viewGuide.classList.toggle('active', !toMonitor);
+    viewMonitor.classList.toggle('active', toMonitor);
+    tabGuide.classList.toggle('active', !toMonitor);
+    tabMonitor.classList.toggle('active', toMonitor);
+  }
+  tabGuide.addEventListener('click', () => showView('guide'));
+  tabMonitor.addEventListener('click', () => showView('monitor'));
+  goToMonitor.addEventListener('click', () => showView('monitor'));
+
+  // ---------------- existing monitor wiring ----------------
+  const video = document.getElementById('video');
+  const overlay = document.getElementById('overlay');
+  const stageMsg = document.getElementById('stageMsg');
+  const startBtn = document.getElementById('startBtn');
+  const statusDot = document.getElementById('statusDot');
+  const statusText = document.getElementById('statusText');
+  const readoutText = document.getElementById('readoutText');
+
+  const dotDistance = document.getElementById('dot-distance');
+  const valDistance = document.getElementById('val-distance');
+  const hintDistance = document.getElementById('hint-distance');
+  const dotH = document.getElementById('dot-h');
+  const valH = document.getElementById('val-h');
+  const hintH = document.getElementById('hint-h');
+  const dotV = document.getElementById('dot-v');
+  const valV = document.getElementById('val-v');
+  const hintV = document.getElementById('hint-v');
+  const dotLight = document.getElementById('dot-light');
+  const valLight = document.getElementById('val-light');
+  const hintLight = document.getElementById('hint-light');
+
+  const minInput = document.getElementById('minRange');
+  const maxInput = document.getElementById('maxRange');
+  const unitLabel = document.getElementById('unitLabel');
+  const cmBtn = document.getElementById('cmBtn');
+  const ftBtn = document.getElementById('ftBtn');
+
+  const advToggle = document.getElementById('advToggle');
+  const advRow = document.getElementById('advRow');
+  const sensSlider = document.getElementById('sensSlider');
+  const sensVal = document.getElementById('sensVal');
+
+  advToggle.addEventListener('click', () => advRow.classList.toggle('show'));
+  sensSlider.addEventListener('input', () => { sensVal.textContent = parseFloat(sensSlider.value).toFixed(2); });
+
+  // --- in-page, distance-based volume (test tone) ---
+  const volToggle = document.getElementById('volToggle');
+  const volToggleLabel = document.getElementById('volToggleLabel');
+  const testToneRow = document.getElementById('testToneRow');
+  const toneBtn = document.getElementById('toneBtn');
+  const volReadout = document.getElementById('volReadout');
+  const volModal = document.getElementById('volModal');
+  const volAllow = document.getElementById('volAllow');
+  const volDeny = document.getElementById('volDeny');
+
+  let volumeFeatureAllowed = false;
+  let volumeFeatureOn = false;
+  let audioCtx = null, gainNode = null, oscNode = null, toneAudioPlaying = false;
+
+  volToggle.addEventListener('change', () => {
+    if(volToggle.checked && !volumeFeatureAllowed){
+      volToggle.checked = false; // wait for confirmation
+      volModal.classList.add('show');
+      return;
+    }
+    volumeFeatureOn = volToggle.checked;
+    volToggleLabel.textContent = volumeFeatureOn ? 'On' : 'Off';
+    testToneRow.style.display = volumeFeatureOn ? 'flex' : 'none';
+    if(!volumeFeatureOn) stopTone();
+  });
+
+  volAllow.addEventListener('click', () => {
+    volumeFeatureAllowed = true;
+    volModal.classList.remove('show');
+    volToggle.checked = true;
+    volumeFeatureOn = true;
+    volToggleLabel.textContent = 'On';
+    testToneRow.style.display = 'flex';
+  });
+  volDeny.addEventListener('click', () => {
+    volModal.classList.remove('show');
+    volToggle.checked = false;
+  });
+
+  function ensureAudio(){
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0.5;
+      gainNode.connect(audioCtx.destination);
+    }
+  }
+
+  function startTone(){
+    ensureAudio();
+    if(oscNode) return;
+    oscNode = audioCtx.createOscillator();
+    oscNode.type = 'sine';
+    oscNode.frequency.value = 330;
+    oscNode.connect(gainNode);
+    oscNode.start();
+    toneAudioPlaying = true;
+    toneBtn.textContent = 'Stop test tone';
+  }
+  function stopTone(){
+    if(oscNode){
+      try{ oscNode.stop(); } catch(e){}
+      oscNode.disconnect();
+      oscNode = null;
+    }
+    toneAudioPlaying = false;
+    toneBtn.textContent = 'Play test tone';
+  }
+  toneBtn.addEventListener('click', () => {
+    if(toneAudioPlaying) stopTone(); else startTone();
+  });
+
+  // Monotonic distance -> volume mapping: closer = quieter, farther = louder.
+  // Independent of the "recommended range" inputs, which stay tied to positioning feedback only.
+  const VOL_NEAR_CM = 40;   // at or inside this distance, volume floors out
+  const VOL_FAR_CM = 220;   // at or beyond this distance, volume ceilings out
+  const VOL_FLOOR = 0.05;
+  const VOL_CEIL = 1.0;
+  function volumeForDistance(distanceCm){
+    const t = (distanceCm - VOL_NEAR_CM) / (VOL_FAR_CM - VOL_NEAR_CM);
+    const clampedT = Math.max(0, Math.min(1, t));
+    return VOL_FLOOR + clampedT * (VOL_CEIL - VOL_FLOOR);
+  }
+
+  const RED = '#F2543D', AMBER = '#F2B84B', GREEN = '#43D9A3';
+
+  // Rough constants for a general (non-calibrated) distance estimate.
+  const AVG_FACE_WIDTH_CM = 14;
+  const ASSUMED_FOCAL_PX = 600; // ballpark focal length in px for a typical webcam at this resolution
+
+  let unit = 'cm';
+  cmBtn.addEventListener('click', () => setUnit('cm'));
+  ftBtn.addEventListener('click', () => setUnit('ft'));
+  function setUnit(u){
+    unit = u;
+    cmBtn.classList.toggle('active', u==='cm');
+    ftBtn.classList.toggle('active', u==='ft');
+    unitLabel.textContent = u;
+    if(u === 'ft'){
+      minInput.value = Math.round((minInput.value / 30.48) * 10) / 10;
+      maxInput.value = Math.round((maxInput.value / 30.48) * 10) / 10;
+    } else {
+      minInput.value = Math.round(minInput.value * 30.48);
+      maxInput.value = Math.round(maxInput.value * 30.48);
+    }
+  }
+
+  function rangeCm(){
+    let min = parseFloat(minInput.value) || 0;
+    let max = parseFloat(maxInput.value) || 0;
+    if(unit === 'ft'){ min *= 30.48; max *= 30.48; }
+    return [Math.min(min,max), Math.max(min,max)];
+  }
+
+  // ---------------- Spotify (PKCE, no client secret) ----------------
+  const spotifyClientIdInput = document.getElementById('spotifyClientId');
+  const spotifyRedirectUriInput = document.getElementById('spotifyRedirectUri');
+  const spotifyConnectBtn = document.getElementById('spotifyConnectBtn');
+  const spotifyDisconnectBtn = document.getElementById('spotifyDisconnectBtn');
+  const spotifyPreConnect = document.getElementById('spotifyPreConnect');
+  const spotifyPostConnect = document.getElementById('spotifyPostConnect');
+  const spotifyStatus = document.getElementById('spotifyStatus');
+  const spotifyVolToggle = document.getElementById('spotifyVolToggle');
+  const spotifyVolToggleLabel = document.getElementById('spotifyVolToggleLabel');
+  const spotifyVolReadout = document.getElementById('spotifyVolReadout');
+  const spotifyVolModal = document.getElementById('spotifyVolModal');
+  const spotifyVolAllow = document.getElementById('spotifyVolAllow');
+  const spotifyVolDeny = document.getElementById('spotifyVolDeny');
+
+  const SPOTIFY_REDIRECT_URI = window.location.origin + window.location.pathname;
+  spotifyRedirectUriInput.value = SPOTIFY_REDIRECT_URI;
+  const SPOTIFY_SCOPES = 'user-read-playback-state user-modify-playback-state';
+
+  let spotifyAccessToken = null;
+  let spotifyRefreshToken = null;
+  let spotifyTokenExpiry = 0;
+  let spotifyFeatureAllowed = false;
+  let spotifyFeatureOn = false;
+  let spotifyLastSentVolume = null;
+  let spotifyLastSentAt = 0;
+  let spotifyRateLimitedUntil = 0;
+
+  function setSpotifyStatus(msg, kind){
+    spotifyStatus.textContent = msg || '';
+    spotifyStatus.className = 'sp-status' + (kind ? ' ' + kind : '');
+  }
+
+  function randomString(len){
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let out = '';
+    const arr = new Uint8Array(len);
+    crypto.getRandomValues(arr);
+    for(let i=0;i<len;i++) out += chars[arr[i] % chars.length];
+    return out;
+  }
+  function base64url(buffer){
+    let str = '';
+    const bytes = new Uint8Array(buffer);
+    for(let i=0;i<bytes.length;i++) str += String.fromCharCode(bytes[i]);
+    return btoa(str).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+  async function sha256(plain){
+    const data = new TextEncoder().encode(plain);
+    return await crypto.subtle.digest('SHA-256', data);
+  }
+
+  spotifyConnectBtn.addEventListener('click', async () => {
+    const clientId = spotifyClientIdInput.value.trim();
+    if(!clientId){
+      setSpotifyStatus('Enter your Spotify app\'s Client ID first.', 'err');
+      return;
+    }
+    const verifier = randomString(64);
+    sessionStorage.setItem('au_sp_verifier', verifier);
+    sessionStorage.setItem('au_sp_client_id', clientId);
+    const challenge = base64url(await sha256(verifier));
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: clientId,
+      scope: SPOTIFY_SCOPES,
+      code_challenge_method: 'S256',
+      code_challenge: challenge,
+      redirect_uri: SPOTIFY_REDIRECT_URI
+    });
+    window.location.href = 'https://accounts.spotify.com/authorize?' + params.toString();
+  });
+
+  spotifyDisconnectBtn.addEventListener('click', () => {
+    spotifyAccessToken = null;
+    spotifyRefreshToken = null;
+    spotifyTokenExpiry = 0;
+    spotifyFeatureOn = false;
+    spotifyFeatureAllowed = false;
+    spotifyVolToggle.checked = false;
+    spotifyVolToggleLabel.textContent = 'Off';
+    sessionStorage.removeItem('au_sp_verifier');
+    sessionStorage.removeItem('au_sp_client_id');
+    spotifyPostConnect.style.display = 'none';
+    spotifyPreConnect.style.display = 'block';
+    setSpotifyStatus('Disconnected.', '');
+  });
+
+  spotifyVolToggle.addEventListener('change', () => {
+    if(spotifyVolToggle.checked && !spotifyFeatureAllowed){
+      spotifyVolToggle.checked = false;
+      spotifyVolModal.classList.add('show');
+      return;
+    }
+    spotifyFeatureOn = spotifyVolToggle.checked;
+    spotifyVolToggleLabel.textContent = spotifyFeatureOn ? 'On' : 'Off';
+  });
+  spotifyVolAllow.addEventListener('click', () => {
+    spotifyFeatureAllowed = true;
+    spotifyVolModal.classList.remove('show');
+    spotifyVolToggle.checked = true;
+    spotifyFeatureOn = true;
+    spotifyVolToggleLabel.textContent = 'On';
+  });
+  spotifyVolDeny.addEventListener('click', () => {
+    spotifyVolModal.classList.remove('show');
+    spotifyVolToggle.checked = false;
+  });
+
+  async function exchangeSpotifyCode(code){
+    const clientId = sessionStorage.getItem('au_sp_client_id');
+    const verifier = sessionStorage.getItem('au_sp_verifier');
+    if(!clientId || !verifier){
+      setSpotifyStatus('Lost the connection state after redirect — click Connect Spotify again.', 'err');
+      return;
+    }
+    try{
+      const resp = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({
+          client_id: clientId,
+          grant_type: 'authorization_code',
+          code: code,
+          redirect_uri: SPOTIFY_REDIRECT_URI,
+          code_verifier: verifier
+        })
+      });
+      const data = await resp.json();
+      if(!resp.ok){
+        setSpotifyStatus('Spotify connection failed: ' + (data.error_description || data.error || resp.status), 'err');
+        return;
+      }
+      spotifyAccessToken = data.access_token;
+      spotifyRefreshToken = data.refresh_token;
+      spotifyTokenExpiry = Date.now() + (data.expires_in * 1000);
+      spotifyClientIdInput.value = clientId;
+      spotifyPreConnect.style.display = 'none';
+      spotifyPostConnect.style.display = 'block';
+      setSpotifyStatus('Connected. Turn on the toggle below to link volume to distance.', 'ok');
+    } catch(e){
+      setSpotifyStatus('Spotify connection failed: ' + e.message, 'err');
+    }
+  }
+
+  async function refreshSpotifyToken(){
+    const clientId = sessionStorage.getItem('au_sp_client_id');
+    if(!spotifyRefreshToken || !clientId) return false;
+    try{
+      const resp = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({
+          client_id: clientId,
+          grant_type: 'refresh_token',
+          refresh_token: spotifyRefreshToken
+        })
+      });
+      const data = await resp.json();
+      if(!resp.ok) return false;
+      spotifyAccessToken = data.access_token;
+      if(data.refresh_token) spotifyRefreshToken = data.refresh_token;
+      spotifyTokenExpiry = Date.now() + (data.expires_in * 1000);
+      return true;
+    } catch(e){ return false; }
+  }
+
+  async function setSpotifyVolume(percent){
+    if(!spotifyAccessToken) return;
+    const now = Date.now();
+    if(now < spotifyRateLimitedUntil) return;
+    if(spotifyLastSentVolume !== null && Math.abs(percent - spotifyLastSentVolume) < 3) return;
+    if(now - spotifyLastSentAt < 700) return;
+    if(now > spotifyTokenExpiry - 5000){
+      const ok = await refreshSpotifyToken();
+      if(!ok){ setSpotifyStatus('Spotify session expired — reconnect.', 'err'); return; }
+    }
+    spotifyLastSentAt = now;
+    spotifyLastSentVolume = percent;
+    try{
+      const resp = await fetch('https://api.spotify.com/v1/me/player/volume?volume_percent=' + percent, {
+        method: 'PUT',
+        headers: {'Authorization': 'Bearer ' + spotifyAccessToken}
+      });
+      if(resp.status === 204){
+        setSpotifyStatus('Linked to distance.', 'ok');
+      } else if(resp.status === 404){
+        setSpotifyStatus('No active Spotify device — start playing something in Spotify first.', 'err');
+      } else if(resp.status === 403){
+        setSpotifyStatus('Spotify Premium is required for volume control.', 'err');
+      } else if(resp.status === 429){
+        const retryAfter = parseInt(resp.headers.get('Retry-After') || '5', 10);
+        spotifyRateLimitedUntil = Date.now() + retryAfter * 1000;
+        setSpotifyStatus('Spotify rate limit hit, backing off briefly.', 'err');
+      } else {
+        setSpotifyStatus('Spotify volume update failed (' + resp.status + ').', 'err');
+      }
+    } catch(e){
+      setSpotifyStatus('Spotify volume update failed: ' + e.message, 'err');
+    }
+  }
+
+  // handle redirect back from Spotify on load
+  (function checkSpotifyRedirect(){
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const err = params.get('error');
+    if(code){
+      showView('monitor');
+      exchangeSpotifyCode(code);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if(err){
+      showView('monitor');
+      setSpotifyStatus('Spotify authorization was cancelled or denied.', 'err');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  })();
+
+  // ---------------- face detection loop ----------------
+  let ctx = null;
+  let lastFace = null;
+  let missCount = 0;
+  let modelsReady = false;
+  let detecting = false;
+
+  startBtn.addEventListener('click', startCamera);
+
+  const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights';
+
+  function startCamera(){
+    statusText.textContent = 'Requesting camera…';
+    navigator.mediaDevices.getUserMedia({ video: { width:640, height:480, facingMode:'user' }, audio:false })
+      .then(stream => {
+        video.srcObject = stream;
+        stageMsg.style.display = 'none';
+        return video.play();
+      })
+      .then(() => {
+        overlay.width = video.videoWidth || 640;
+        overlay.height = video.videoHeight || 480;
+        ctx = overlay.getContext('2d');
+        statusText.textContent = 'Loading face detector…';
+        return loadModels();
+      })
+      .then(() => {
+        modelsReady = true;
+        statusText.textContent = 'Looking for a face…';
+        requestAnimationFrame(drawLoop);
+        detectTick();
+      })
+      .catch(err => {
+        console.error(err);
+        if(!modelsReady && video.srcObject){
+          statusText.textContent = 'Face detector failed to load.';
+          readoutText.textContent = 'Check your network connection (the detection model loads from a CDN) and reload the page.';
+        } else {
+          statusText.textContent = 'Camera access was blocked.';
+          readoutText.textContent = 'Allow camera permission in your browser settings and reload the page.';
+        }
+      });
+  }
+
+  function loadModels(){
+    return Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL)
+    ]);
+  }
+
+  async function detectTick(){
+    if(!modelsReady) return;
+    if(video.readyState >= 2 && !detecting){
+      detecting = true;
+      try{
+        const opts = new faceapi.TinyFaceDetectorOptions({
+          inputSize: 320,
+          scoreThreshold: parseFloat(sensSlider.value)
+        });
+        const result = await faceapi.detectSingleFace(video, opts);
+        if(result && result.box && result.box.width > 20){
+          lastFace = result.box;
+          missCount = 0;
+        } else {
+          missCount++;
+          if(missCount > 6) lastFace = null;
+        }
+      } catch(e){
+        console.error('detection error', e);
+      }
+      detecting = false;
+    }
+    setTimeout(detectTick, 120);
+  }
+
+  function statusColorFor(dot, ok){
+    dot.style.background = ok ? GREEN : RED;
+  }
+
+  function drawLoop(){
+    requestAnimationFrame(drawLoop);
+    if(!ctx) return;
+    ctx.clearRect(0,0,overlay.width, overlay.height);
+
+    if(!lastFace){
+      statusDot.style.background = RED;
+      statusText.textContent = 'No face detected';
+      readoutText.textContent = 'Face the camera directly, with your face taking up a good part of the frame, in decent light.';
+      [dotDistance,dotH,dotV,dotLight].forEach(d => d.style.background = RED);
+      valDistance.textContent = '— cm';
+      valH.textContent = '—'; valV.textContent = '—'; valLight.textContent = '—';
+      if(volumeFeatureOn) volReadout.textContent = 'vol —';
+      if(spotifyFeatureOn) spotifyVolReadout.textContent = 'vol —';
+      return;
+    }
+
+    const f = lastFace;
+    const vw = overlay.width, vh = overlay.height;
+
+    // mirror x since video is mirrored visually
+    const faceCenterX = vw - (f.x + f.width/2);
+    const faceCenterY = f.y + f.height/2;
+
+    // --- distance estimate ---
+    const distanceCm = (AVG_FACE_WIDTH_CM * ASSUMED_FOCAL_PX) / f.width;
+    const [minCm, maxCm] = rangeCm();
+    const distOk = distanceCm >= minCm && distanceCm <= maxCm;
+    const displayDist = unit === 'ft' ? (distanceCm/30.48).toFixed(1)+' ft' : Math.round(distanceCm)+' cm';
+    valDistance.textContent = displayDist;
+    statusColorFor(dotDistance, distOk);
+    hintDistance.textContent = distOk ? 'In range' : (distanceCm < minCm ? 'Move farther away' : 'Move closer');
+
+    if(volumeFeatureOn && gainNode){
+      const level = volumeForDistance(distanceCm);
+      gainNode.gain.setTargetAtTime(level, audioCtx.currentTime, 0.15);
+      volReadout.textContent = 'vol ' + Math.round(level*100) + '%';
+    }
+    if(spotifyFeatureOn && spotifyAccessToken){
+      const level = volumeForDistance(distanceCm);
+      const pct = Math.round(level*100);
+      spotifyVolReadout.textContent = 'vol ' + pct + '%';
+      setSpotifyVolume(pct);
+    }
+
+    // --- horizontal centering ---
+    const hOffset = (faceCenterX - vw/2) / (vw/2); // -1..1
+    const hOk = Math.abs(hOffset) < 0.18;
+    valH.textContent = (hOffset*100).toFixed(0)+'%';
+    statusColorFor(dotH, hOk);
+    hintH.textContent = hOk ? 'Centered' : (hOffset < 0 ? 'Shift right' : 'Shift left');
+
+    // --- vertical centering ---
+    const vOffset = (faceCenterY - vh/2) / (vh/2);
+    const vOk = Math.abs(vOffset) < 0.2;
+    valV.textContent = (vOffset*100).toFixed(0)+'%';
+    statusColorFor(dotV, vOk);
+    hintV.textContent = vOk ? 'Centered' : (vOffset < 0 ? 'Raise camera' : 'Lower camera');
+
+    // --- lighting ---
+    let brightness = 128;
+    try{
+      const tmp = document.createElement('canvas');
+      tmp.width = Math.max(1,Math.round(f.width));
+      tmp.height = Math.max(1,Math.round(f.height));
+      const tctx = tmp.getContext('2d');
+      tctx.drawImage(video, vw - f.x - f.width, f.y, f.width, f.height, 0, 0, tmp.width, tmp.height);
+      const data = tctx.getImageData(0,0,tmp.width,tmp.height).data;
+      let sum = 0, count = 0;
+      for(let i=0;i<data.length;i+=16){
+        sum += (data[i]+data[i+1]+data[i+2])/3;
+        count++;
+      }
+      brightness = count ? sum/count : 128;
+    } catch(e){ /* ignore, cross-origin canvas safety */ }
+    const lightOk = brightness > 75 && brightness < 205;
+    valLight.textContent = Math.round(brightness);
+    statusColorFor(dotLight, lightOk);
+    hintLight.textContent = lightOk ? 'Good lighting' : (brightness <= 75 ? 'Too dark' : 'Too bright');
+
+    const allOk = distOk && hOk && vOk && lightOk;
+    statusDot.style.background = allOk ? GREEN : (distOk ? AMBER : RED);
+    statusText.textContent = allOk ? 'Optimal position' : 'Adjusting…';
+    readoutText.textContent = 'distance ' + Math.round(distanceCm) + 'cm · target ' + Math.round(minCm) + '-' + Math.round(maxCm) + 'cm';
+
+    // --- draw overlay: box + sonar rings ---
+    const boxColor = allOk ? GREEN : (distOk ? AMBER : RED);
+    ctx.save();
+    ctx.strokeStyle = boxColor;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(vw - f.x - f.width, f.y, f.width, f.height);
+
+    const cx = faceCenterX, cy = faceCenterY;
+    const t = performance.now()/1000;
+    for(let i=0;i<3;i++){
+      const phase = (t*0.6 + i/3) % 1;
+      const r = (f.width/1.3) * (0.9 + phase*0.9);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.strokeStyle = boxColor;
+      ctx.globalAlpha = (1-phase) * 0.5;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+})();
+</script>
+</body>
+</html>
