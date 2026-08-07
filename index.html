@@ -1863,9 +1863,9 @@
           </svg>
         </div>
         <h3>Windows</h3>
-        <div class="ext-badge">In Development</div>
+        <div class="ext-badge">v1.0.0</div>
         <p>Runs quietly in your system tray and adjusts your system volume as you move closer to or farther from your screen.</p>
-        <button class="hero-cta solid app-download-btn" disabled>In Development</button>
+        <a class="hero-cta solid app-download-btn" href="downloads/OtoCorrectExtendSetup.exe" download style="display:inline-block;text-decoration:none;text-align:center;">Download for Windows</a>
       </div>
 
       <div class="panel-white app-download-card">
@@ -3586,14 +3586,7 @@
   // public. Restrict it to text-to-speech only and set a usage cap in the
   // ElevenLabs dashboard, and rotate it if this file is ever shared or
   // hosted publicly.
-  // The real ElevenLabs API key now lives only in the Cloudflare Worker's
-  // encrypted secrets store (see the Worker deployment notes) - it is never
-  // sent to or stored in this front-end file. All requests below go through
-  // that Worker instead of api.elevenlabs.io directly.
-  //
-  // TODO: replace this with your deployed Worker URL, e.g.
-  // 'https://otocorrect-eleven-proxy.YOUR-SUBDOMAIN.workers.dev'
-  const ELEVEN_PROXY_BASE = 'https://otocorrect-eleven-proxy.htr-email1.workers.dev';
+  const ELEVEN_API_KEY = 'sk_1074cef3297a7badc7b33ece3364419bab75995aef703765';
   const ELEVEN_MODEL_ID = 'eleven_multilingual_v2';
   const ELEVEN_PREVIEW_TEXT = {
     en: 'The first move sets everything in motion.',
@@ -3642,7 +3635,9 @@
   async function fetchElevenVoices(){
     setElevenKeyStatus('Loading ElevenLabs voices…', false);
     try{
-      const res = await fetch(ELEVEN_PROXY_BASE + '/v1/voices');
+      const res = await fetch('https://api.elevenlabs.io/v1/voices', {
+        headers: { 'xi-api-key': ELEVEN_API_KEY }
+      });
       if(!res.ok){
         setElevenKeyStatus('Could not load ElevenLabs voices (' + res.status + '). Using your device\'s built-in voice instead.', true);
         return [];
@@ -3695,9 +3690,10 @@
   }
 
   async function elevenTtsToAudio(voiceId, text){
-    const res = await fetch(ELEVEN_PROXY_BASE + '/v1/text-to-speech/' + encodeURIComponent(voiceId), {
+    const res = await fetch('https://api.elevenlabs.io/v1/text-to-speech/' + encodeURIComponent(voiceId), {
       method: 'POST',
       headers: {
+        'xi-api-key': ELEVEN_API_KEY,
         'Content-Type': 'application/json',
         'Accept': 'audio/mpeg'
       },
